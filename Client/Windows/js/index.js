@@ -1,7 +1,7 @@
 const { ipcRenderer, remote } = require('electron');
 
 const main = remote.require('./main');//acess export functions in main
-const { dialog, Menu, MenuItem, systemPreferences, nativeTheme, clipboard, shell } = remote;//Access to electron dependencies
+const { dialog, Menu, MenuItem, clipboard } = remote;//Access to electron dependencies
 const fs = require('fs');//file system
 
 const text_box_menu = new Menu.buildFromTemplate([//Text box menu (for convinience)

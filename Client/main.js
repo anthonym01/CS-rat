@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, screen, MenuItem, Tray } = require('electron');
+const { app, BrowserWindow, Menu, screen, MenuItem, Tray, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 //const { createPublicKey } = require('crypto');
@@ -14,7 +14,7 @@ app.on('ready', function () {//App ready to roll
 	if (storeinator.get('default')) {
 		config = JSON.parse(storeinator.get('default'))
 	} else {
-		storeinator.set('default',JSON.stringify(config))
+		storeinator.set('default', JSON.stringify(config))
 	}
 	createmainWindow()
 	//create_tray()

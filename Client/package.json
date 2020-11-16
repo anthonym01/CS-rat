@@ -19,7 +19,6 @@
     "start": "electron main.js",
     "deb-linux": "electron-installer-debian --src dist/{output-folder}/ --arch x64 --config debian.json",
     "postinstall": "electron-builder install-app-deps",
-    "builder-linux": "electron-builder --linux deb appimage tar.xz snap",
     "builder-win": "electron-builder --win --x64 --ia32"
   },
   "build": {
@@ -33,11 +32,6 @@
     "win": {
       "target": "nsis",
       "icon": "assets/icons/icon.ico"
-    },
-    "linux": {
-      "target": "deb",
-      "category": "utility",
-      "icon": "assets/icons/icon.png"
     }
   },
   "devDependencies": {
