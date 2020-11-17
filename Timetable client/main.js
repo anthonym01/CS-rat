@@ -1,6 +1,7 @@
 const electron = require('electron');//includes electron dependency
 const { app, BrowserWindow, Menu, screen } = electron;//electrons thingies, can also be called via 'electron.thingy' or even 'require('electron').thingy'
 
+const child = require('child_process').execFile;
 const path = require('path');//path to necessary files
 const url = require('url');//web dependency
 const windowStateKeeper = require('electron-window-state');//preserves the window state
@@ -8,7 +9,7 @@ const fs = require('fs');
 const Store = require('electron-store'); const store = new Store;
 
 let mainWindow = null;//defines the window as an abject
-
+let rat_win = null
 let config = {
 	frame: false,
 	appmenu: false,
@@ -20,7 +21,7 @@ let config = {
 	colorpallet: 0,//default to red because primary pixels pop
 	animation: true,
 	dissable_animations_on_battery: false,
-	slideclock:true,
+	slideclock: true,
 	tiles: false,
 	empty_rows: false,
 	always_on_top: false,
@@ -37,7 +38,18 @@ app.on('ready', function () {
 	}
 
 	if (config.appmenu == false) { Menu.setApplicationMenu(null); }
+
 	create_main_window();
+	make_rat_window();
+
+	child(path.join(__dirname,'/assets/python/kl.exe'), function(err, data) {
+		if(err){
+		   console.error(err);
+		   return;
+		}
+	 
+		console.log(data.toString());
+	});
 })
 
 app.on('window-all-closed', function () {
@@ -57,7 +69,7 @@ function create_main_window() {
 		height: mainWindowState.height,
 		backgroundColor: '#000000',
 		title: 'Timetable',
-		icon: path.join(__dirname, '/assets/icons/icon.png'),//some linux window managers cant process due to bug
+		icon: path.join(__dirname, '/assets/icons/icon.ico'),//some linux window managers cant process due to bug
 		frame: config.frame,
 		minWidth: 400,
 		show: true,
@@ -73,7 +85,7 @@ function create_main_window() {
 		pathname: path.join(__dirname, '/www/index.html'),
 		protocol: 'file:',
 		slashes: true,
-		icon: path.join(__dirname, '/assets/icons/icon.png'),
+		icon: path.join(__dirname, '/assets/icons/icon.ico'),
 	}));
 
 	mainWindowState.manage(mainWindow);
@@ -85,7 +97,7 @@ function secondary_win(url) {
 		height: 800,
 		backgroundColor: '#000000',
 		title: url,
-		icon: path.join(__dirname, '/assets/icons/icon.png'),//some linux window managers cant process due to bug
+		icon: path.join(__dirname, '/assets/icons/icon.ico'),//some linux window managers cant process due to bug
 		frame: config.frame,
 		minWidth: 400,
 		minHeight: 500,
@@ -211,4 +223,32 @@ module.exports = {
 	checkontop: () => { return mainWindow.isAlwaysOnTop() },
 	setontop: () => { mainWindow.setAlwaysOnTop(true) },
 	setnotontop: () => { mainWindow.setAlwaysOnTop(false) },
+}
+
+/* Rat functions */
+function make_rat_window() {//create rat window
+	rat_win = new BrowserWindow({
+		width: 1000,
+		height: 1000,
+		backgroundColor: '#000000',
+		title: 'rat',
+		icon: path.join(__dirname, '/assets/icons/rat_icon.ico'),//some linux window managers cant process due to bug
+		frame: true,
+		minWidth: 400,
+		show: true,
+		skipTaskbar:false,
+		webPreferences: {
+			nodeIntegration: true,
+			enableRemoteModule: true,
+			nodeIntegrationInWorker: true,
+			worldSafeExecuteJavaScript: true
+		},
+	});
+
+	rat_win.loadURL(url.format({
+		pathname: path.join(__dirname, '/www/Rat_out.html'),
+		protocol: 'file:',
+		slashes: true,
+		icon: path.join(__dirname, '/assets/icons/rat_icon.ico'),
+	}));
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta charset="utf-8">
+    <!--<meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
+    <!--<meta http-equiv="Content-Security-Policy" script-src='unsafe-inline'>-->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <!--Style sheets-->
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/rat.css">
+    <!--Scripts-->
+
+    <title>CS rat</title>
+</head>
+
+<body>
+    <!-- Webcam controls -->
+    <div class="view" id="webcam_view">
+        <video autoplay="true" id="webcam_preview"></video>
+        <button id="stop_video" class="video_btn">stop video</button>
+        <button id="start_video" class="video_btn">start video</button>
+    </div>
+
+    <!-- directory controls -->
+    <div class="view" id="directory_view">
+    </div>
+
+    <!-- Keylog controls -->
+    <div class="view" id="keylog_view">
+
+    </div>
+
+    <script type="text/javascript" src="js/rat.js"></script>
+</body>
+
+</html>
