@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css?family=VT323');
+
+@import url('https://fonts.googleapis.com/css?family=Lexend+Deca|Roboto&display=swap');
+/*
+Google fonts
+font-family: 'VT323', monospace;
+font-family: 'Roboto', sans-serif;
+font-family: 'Lexend Deca', sans-serif;
+*/
+
+
+:root {
+    --text-color: rgb(0, 0, 0);
+    --background-color: rgb(255, 255, 255);
+    --accent_color: rgb(0, 153, 255);
+    --grey: rgb(122, 122, 122);
+    --off_grey: rgb(205, 205, 205);
+    --half_grey: rgb(165, 165, 165);
+    --folder: url('../img/fileicons/folder_black.webp');
+    --file: url('../img/fileicons/file_black.webp');
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: rgb(255, 255, 255);
+        --background-color: rgb(0, 0, 0);
+        --accent_color: rgb(0, 153, 255);
+        --grey: rgb(122, 122, 122);
+        --off_grey: rgb(50, 50, 50);
+        --half_grey: rgb(90, 90, 90);
+        --folder: url('../img/fileicons/folder_white.webp');
+        --file: url('../img/fileicons/file_white.webp');
+    }
+}
+
+body {
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    font-family: 'Lexend Deca', sans-serif;
+}
+
+body::before {
+    /* Remove upon deployment*/
+    position: absolute;
+    z-index: -1;
+    content: "Phone layout";
+    bottom: 0;
+    height: auto;
+    width: auto;
+}
+
+.view {
+    position: relative;
+    height: fit-content;
+    width: 100%;
+    display: block;
+    margin-bottom: 1em;
+}
+
+.title {
+    position: relative;
+    height: auto;
+    width: 100%;
+    line-height: 100%;
+    font-size: 1.5em;
+    margin-bottom: 0.3em;
+    text-align: center;
+}
+
+/* Webcam */
+
+#webcam_preview {
+    position: relative;
+    height: 40vw;
+    width: 100%;
+    background-color: var(--off_grey);
+    border: 0.5vw dashed var(--off_grey);
+}
+
+.video_btn {
+    height: auto;
+    width: auto;
+    line-height: 100%;
+    word-wrap: none;
+    white-space: nowrap;
+    background-color: var(--text-color);
+    color: var(--background-color);
+    font-size: 1.5em;
+    border: none;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+
+/* Directories */
+#dirbox {
+    position: relative;
+    height: 40vw;
+    width: 100%;
+    background-color: var(--off_grey);
+    border: 0.5vw dashed var(--off_grey);
+    overflow: auto;
+}
+
+.directory {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    position: relative;
+    height: 2em;
+    width: 90%;
+    margin-left: 5%;
+    cursor: pointer;
+}
+
+.dir_icon,
+.file_icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2em;
+    width: 2em;
+    background-image: var(--folder);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.file_icon {
+    background-image: var(--file);
+}
+
+.filename {
+    position: absolute;
+    top: 0;
+    left: 2em;
+    width: calc(100% - 2em);
+    line-height: 100%;
+    font-size: 1.3em;
+}
+
+#back_a_dir {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5%;
+    height: 100%;
+    background-color: black;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* Keylog */
+#keybox {
+    position: relative;
+    height: 40vw;
+    width: 100%;
+    background-color: var(--off_grey);
+    border: 0.5vw dashed var(--off_grey);
+    overflow: auto;
+}
+
+.keyholder {
+    position: relative;
+    float: left;
+    height: auto;
+    width: auto;
+    padding: 0.3em;
+    font-size: 1em;
+}
+
+/* Tablet / tall aspact ratio */
+@media screen and (min-aspect-ratio: 1/3) and (min-aspect-ratio: 3/4) and (min-width:300px) {
+    body::before {
+        content: "tablet layout";
+    }
+
+
+}
+
+/*    <--  Landscape layout / Standard (with min-width) -->     */
+@media screen and (min-aspect-ratio: 3/2) and (min-width:400px) {
+    body::before {
+        content: "Landscape layout";
+    }
+
+
+}

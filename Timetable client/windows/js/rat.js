@@ -1,6 +1,6 @@
 const axios = require("axios");//comunication with python sub process on port 5088
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 
 const video_element = document.getElementById("webcam_preview")
 document.getElementById("stop_video").addEventListener('click', function () { camanager.stop_webcam() })
