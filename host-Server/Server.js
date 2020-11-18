@@ -8,7 +8,7 @@ const port = 1999;//port for the server
 
 function notfoundpage(res, url) {//404 page goes here
     res.writeHead(404);//write head 404 so the client expects an error message
-    res.write('404, code: '+ url);
+    res.write('404, code: ' + url);
     console.error('File not found: ', url)
 }
 
@@ -16,15 +16,15 @@ function notfoundpage(res, url) {//404 page goes here
 const server = http.createServer(function (req, res) {
     //What the webpage will expect ot receive, res = response, req = request
 
-    //console.log('Request Url: ', req.headers);
-    console.log('Raw rsponse: ',res)
+    console.log('Request Url: ', req.url);
+    //console.log('Raw rsponse: ',res)
 
     res.setHeader('Acess-Control-Allow-Origin', '*');//allow access control from client, this will automatically handle most media files
 
     if (req.url == '/' || req.url == '/index.html') {//requested url at the start of the site
 
         res.setHeader('Content-type', 'text/html');//Set the header to html, so the client will expects a html document
-
+        res.writeHead(200);//200 ok
         fs.readFile('index.html', function (err, data) {//read index.html file
             if (err) {//error because file not found/inaccesible
                 notfoundpage(res, 'index');//show 404 page
@@ -48,6 +48,7 @@ const server = http.createServer(function (req, res) {
             //media handled automatically
         }
 
+        res.writeHead(200);//200 ok
         fs.readFile(req.url.replace('/', ''), function (err, data) {//read req.url.replace('/', '') file
             if (err) {//error because file not found/inaccesible
                 notfoundpage(res, req.url);//show 404 page

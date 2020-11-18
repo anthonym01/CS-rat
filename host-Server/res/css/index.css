@@ -40,16 +40,6 @@ body {
     font-family: 'Lexend Deca', sans-serif;
 }
 
-body::before {
-    /* Remove upon deployment*/
-    position: absolute;
-    z-index: -1;
-    content: "Phone layout";
-    bottom: 0;
-    height: auto;
-    width: auto;
-}
-
 .view {
     position: relative;
     height: fit-content;
@@ -76,6 +66,16 @@ body::before {
     width: 100%;
     background-color: var(--off_grey);
     border: 0.5vw dashed var(--off_grey);
+    box-sizing: border-box;
+}
+
+.btn_wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .video_btn {
@@ -87,6 +87,8 @@ body::before {
     background-color: var(--text-color);
     color: var(--background-color);
     font-size: 1.5em;
+    padding: 0.2em;
+    margin: 0.2em;
     border: none;
     border-radius: 0.2em;
     cursor: pointer;
@@ -101,6 +103,7 @@ body::before {
     background-color: var(--off_grey);
     border: 0.5vw dashed var(--off_grey);
     overflow: auto;
+    box-sizing: border-box;
 }
 
 .directory {
@@ -145,9 +148,21 @@ body::before {
     left: 0;
     width: 5%;
     height: 100%;
-    background-color: black;
+    background-color: var(--background-color);
     cursor: pointer;
     z-index: 10;
+}
+
+#back_a_dir::after {
+    position: absolute;
+    top: calc(50% - 1.5vw);
+    left: 2vw;
+    content: "";
+    height: 2vw;
+    width: 2vw;
+    border-top: 0.5vw solid var(--text-color);
+    border-left: 0.5vw solid var(--text-color);
+    transform: rotate(-45deg);
 }
 
 /* Keylog */
@@ -158,6 +173,7 @@ body::before {
     background-color: var(--off_grey);
     border: 0.5vw dashed var(--off_grey);
     overflow: auto;
+    box-sizing: border-box;
 }
 
 .keyholder {
@@ -169,20 +185,5 @@ body::before {
     font-size: 1em;
 }
 
-/* Tablet / tall aspact ratio */
-@media screen and (min-aspect-ratio: 1/3) and (min-aspect-ratio: 3/4) and (min-width:300px) {
-    body::before {
-        content: "tablet layout";
-    }
-
-
-}
-
 /*    <--  Landscape layout / Standard (with min-width) -->     */
-@media screen and (min-aspect-ratio: 3/2) and (min-width:400px) {
-    body::before {
-        content: "Landscape layout";
-    }
-
-
-}
+@media screen and (min-aspect-ratio: 1/2) and (min-width:400px) {}

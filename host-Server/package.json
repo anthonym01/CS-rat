@@ -1,0 +1,14 @@
+{
+  "name": "host-server",
+  "version": "1.0.0",
+  "description": "Host server for CS rat",
+  "main": "Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "poststart": ""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
