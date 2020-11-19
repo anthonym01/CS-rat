@@ -52,6 +52,10 @@ window.addEventListener('load', function () { //window loads
 
     clocktick()
     setInterval(() => { clocktick() }, 1000)
+    setTimeout(() => {
+        console.log('Closing loading screen...')
+        document.getElementById('Loading').style.display = 'none'
+    }, 0)
 });
 
 function maininitalizer() {//starter/soft resterter

