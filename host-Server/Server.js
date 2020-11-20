@@ -82,6 +82,18 @@ const server = http.createServer(function (req, res) {
             });
 
             break;
+
+        case '/action/post/folders/instruct'://receive folder instructions from Control page
+
+            req.on('data', function (data) {
+                dirman_instruction = JSON.parse(data)
+                console.log('folder instruction data :', dirman_instruction)
+                res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
+                res.end(JSON.stringify({ server: 'instruction received' }))
+            });
+
+            break;
+
         default://Request is for component of webpage
 
             if (req.url.indexOf('.css') != -1) {//requested url is a css file

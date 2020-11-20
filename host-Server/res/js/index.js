@@ -60,6 +60,20 @@ async function request(what) {//make a request to server
     xhttp.send();
 }
 
+async function post(what,where){//post data to server
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var resput = JSON.parse(this.responseText)
+            console.log('Sever responed to post ',where,'with: ', resput)
+        }
+    };
+
+    xhttp.open("POST", where, true);
+    xhttp.send(JSON.stringify(what));
+}
+
 function writeoutkeylog(keys) {//write keylog data to page
     console.log('write keylog: ', keys)
     keybox.innerText = "";
