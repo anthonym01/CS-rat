@@ -6,7 +6,7 @@ const path = require('path');
 
 const remotehost = 'localhost';
 const remoteport = 1999;
-const update_interval = 5000;
+const update_interval = 1000;
 
 const video_element = document.getElementById("webcam_preview")
 document.getElementById("stop_video").addEventListener('click', function () { camanager.stop_webcam() })
@@ -93,7 +93,7 @@ let directoryman = {
     files: [],
     current_dir: [],
     remote_instructions: function () {
-        axios.default.post(
+        axios.default.post(//post folders to server
             'http://' + remotehost + ':' + remoteport + '/action/post/folders',
             JSON.stringify({
                 files: directoryman.files,
@@ -102,6 +102,7 @@ let directoryman = {
         ).then(res => {//instructions in the response
             var instriction = JSON.parse(res.data)
             console.log('server replied: ', instriction)
+
             switch (instriction.action) {
                 case 'do nothing':
                     //do no action
@@ -128,6 +129,7 @@ let directoryman = {
         directoryman.files = [];
         for (let i in letters) {
             if (fs.existsSync(letters[i])) {
+                directoryman.files.push({path:letters[i],type:'folder'});
                 this.build_dir(letters[i], letters[i])
             }
         }
@@ -141,6 +143,7 @@ let directoryman = {
                 console.log(err)
                 return 0;
             }
+
             dirbox.innerHTML = "";
             directoryman.files = files;
             console.log(files)

