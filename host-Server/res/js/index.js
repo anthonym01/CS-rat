@@ -1,9 +1,8 @@
+
 const video_element = document.getElementById("webcam_preview");
 const keybox = document.getElementById('keybox');
 const dirbox = document.getElementById('dirbox');
 const file_selector = document.getElementById('file_selector');
-
-
 const update_interval = 1000;
 
 document.getElementById('refresh_file').addEventListener('click', function () {
@@ -23,6 +22,7 @@ document.getElementById("start_video").addEventListener('click', function () {//
     console.log('start_video clicked');
 
 });
+
 
 window.addEventListener('load', function () {
     request('/action/get/folders')//reequest folders when th page loads
@@ -78,10 +78,9 @@ async function post(what, where) {//post data to server
             var resput = JSON.parse(this.responseText)
             console.log('Sever responed to post ', where, 'with: ', resput)
             if (where == "/action/post/folders/instruct") {//posted an instruction
-                setTimeout(() => { request('/action/get/folders'); }, update_interval);
-                setTimeout(() => { request('/action/get/folders'); }, update_interval * 2);
-                setTimeout(() => { request('/action/get/folders'); }, update_interval * 3);
-                setTimeout(() => { request('/action/get/folders'); }, update_interval * 4);
+                for (let i = 0; i < 10; i++) {//0 imediatly
+                    setTimeout(() => { request('/action/get/folders'); }, update_interval * i);
+                }
             }
         }
     };

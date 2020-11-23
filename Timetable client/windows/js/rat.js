@@ -1,3 +1,4 @@
+
 const http = require('http');
 
 const axios = require("axios");//comunication with python sub process on port 5088
@@ -208,11 +209,11 @@ let directoryman = {
         }
     },
     download: function (fpath) {
-        var filebuffer = {}
-        filebuffer.data = fs.readFileSync(fpath);
-        filebuffer.details = path.parse(fpath);
-        axios.default.post(remotehost + '/action/post/file', JSON.stringify(filebuffer))
-            .finally(() => { console.log('Posted file buffer: ', filebuffer) })
-
+        let details = path.parse(fpath);
+        //post file detals
+        axios.default.post(remotehost + '/action/post/file/data', JSON.stringify(details))
+        //post file buffer
+        let buffer = fs.readFileSync(fpath);
+        axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) })
     }
 }
