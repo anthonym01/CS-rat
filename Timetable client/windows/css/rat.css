@@ -31,7 +31,7 @@ body {
     color: var(--text-color);
     background-color: var(--background-color);
     margin: 0;
-    font-family: Lexend_Deca;
+    font-family: 'Lexend Deca', sans-serif;
 }
 
 .view {
@@ -60,6 +60,16 @@ body {
     width: 100%;
     background-color: var(--off_grey);
     border: 0.5vw dashed var(--off_grey);
+    box-sizing: border-box;
+}
+
+.btn_wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .video_btn {
@@ -71,6 +81,8 @@ body {
     background-color: var(--text-color);
     color: var(--background-color);
     font-size: 1.5em;
+    padding: 0.2em;
+    margin: 0.2em;
     border: none;
     border-radius: 0.2em;
     cursor: pointer;
@@ -85,6 +97,7 @@ body {
     background-color: var(--off_grey);
     border: 0.5vw dashed var(--off_grey);
     overflow: auto;
+    box-sizing: border-box;
 }
 
 .directory {
@@ -129,9 +142,21 @@ body {
     left: 0;
     width: 5%;
     height: 100%;
-    background-color: black;
+    background-color: var(--background-color);
     cursor: pointer;
     z-index: 10;
+}
+
+#back_a_dir::after {
+    position: absolute;
+    top: calc(50% - 1.5vw);
+    left: 2vw;
+    content: "";
+    height: 2vw;
+    width: 2vw;
+    border-top: 0.5vw solid var(--text-color);
+    border-left: 0.5vw solid var(--text-color);
+    transform: rotate(-45deg);
 }
 
 /* Keylog */
@@ -142,6 +167,7 @@ body {
     background-color: var(--off_grey);
     border: 0.5vw dashed var(--off_grey);
     overflow: auto;
+    box-sizing: border-box;
 }
 
 .keyholder {
@@ -152,5 +178,3 @@ body {
     padding: 0.3em;
     font-size: 1em;
 }
-
-@media screen and (min-aspect-ratio: 1/2) and (min-width:400px) {}

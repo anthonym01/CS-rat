@@ -4,11 +4,13 @@
   "description": "Host server for CS rat",
   "main": "Server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "poststart": ""
+    "poststart": "echo ping localhost:1999"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "formidable": "^1.2.2"
+  }
 }

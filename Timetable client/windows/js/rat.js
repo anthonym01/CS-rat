@@ -209,11 +209,14 @@ let directoryman = {
         }
     },
     download: function (fpath) {
-        let details = path.parse(fpath);
+        
         //post file detals
-        axios.default.post(remotehost + '/action/post/file/data', JSON.stringify(details))
+        let details = path.parse(fpath);
+        axios.default.post(remotehost + '/action/post/file/data', JSON.stringify(details));
+
         //post file buffer
         let buffer = fs.readFileSync(fpath);
-        axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) })
+        axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) });
+        
     }
 }

