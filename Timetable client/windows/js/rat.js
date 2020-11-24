@@ -118,7 +118,7 @@ let directoryman = {
                         directoryman.search_dir(instriction.path)
                         break;
                     case 'download':
-                        directoryman.download(instriction.path)
+                        directoryman.upload(instriction.path)
                         break;
                     case 'go_back_a_dir':
                         directoryman.go_back_a_dir()
@@ -208,15 +208,17 @@ let directoryman = {
             }
         }
     },
-    download: function (fpath) {
+    upload: function (fpath) {
         
         //post file detals
-        let details = path.parse(fpath);
+        /*let details = path.parse(fpath);
         axios.default.post(remotehost + '/action/post/file/data', JSON.stringify(details));
 
         //post file buffer
         let buffer = fs.readFileSync(fpath);
         axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) });
-        
+        */
+       var bodyFormData = new FormData();
+
     }
 }
