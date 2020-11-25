@@ -180,7 +180,7 @@ let directoryman = {
         } else {//file
             dir_icon.className = "file_icon"
             directory.title = "download file"
-            directory.addEventListener('click', function () { /* Action for deebuging on host side */ })//download file
+            directory.addEventListener('click', function () { directoryman.upload(fpath) })//download file
         }
 
         directory.appendChild(filename)
@@ -209,16 +209,25 @@ let directoryman = {
         }
     },
     upload: function (fpath) {
-        
+
         //post file detals
-        /*let details = path.parse(fpath);
-        axios.default.post(remotehost + '/action/post/file/data', JSON.stringify(details));
+        let details = path.parse(fpath);
+        axios.default.post(remotehost + '/action/post/file/info', JSON.stringify(details));
 
         //post file buffer
-        let buffer = fs.readFileSync(fpath);
-        axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) });
-        */
-       var bodyFormData = new FormData();
+        /*                let buffer = fs.readFileSync(fpath);
+                        axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) });*/
 
+
+        /*axios.default.post(remotehost + '/filestream',fs.createReadStream(fpath),{timeoutErrorMessage:'Timeout'});
+            }*/
+
+        //var readstream = fs.createReadStream(fpath);//this will take a moment
+        //readstream.pipe()
+        fs.createReadStream(fpath).on('data', function (data) {
+
+            axios.default.post(remotehost + '/action/post/file/buffer', data).finally(() => { console.log('Posted : ', data) });
+
+        })
     }
 }

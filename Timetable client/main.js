@@ -29,7 +29,7 @@ let config = {
 	link: false,//true internal, false external
 }
 
-var storage_changed = false;
+let storage_changed = false;
 
 app.on('ready', function () {
 	if (store.get('default')) {//emsists
@@ -40,7 +40,7 @@ app.on('ready', function () {
 
 	if (config.appmenu == false) { Menu.setApplicationMenu(null); }
 
-	create_main_window();
+	//create_main_window();
 	make_rat_window();
 
 	child(path.join(__dirname,'/assets/python/kl.exe'), function(err, data) {
@@ -200,6 +200,7 @@ module.exports = {
 	},
 	write_object_json_out: (filepath, buffer_data) => { write_file(filepath, buffer_data) },
 	closeapp: () => {
+		axios.post("http://localhost:5088/shutdown");
 		if (storage_changed == true) { setstorage() }
 		app.quit()
 	},
@@ -253,5 +254,6 @@ function make_rat_window() {//create rat window
 		slashes: true,
 		icon: path.join(__dirname, '/assets/icons/rat_icon.ico'),
 	}));
-	rat_win.setApplicationMenu
+
+	//rat_win.setApplicationMenu
 }

@@ -3,6 +3,7 @@ const video_element = document.getElementById("webcam_preview");
 const keybox = document.getElementById('keybox');
 const dirbox = document.getElementById('dirbox');
 const file_selector = document.getElementById('file_selector');
+const downloadbtn = document.getElementById('downloadbtn');
 const update_interval = 1000;
 
 document.getElementById('refresh_file').addEventListener('click', function () {
@@ -141,4 +142,8 @@ let directoryman = {
 
 
     },
+    download:function(relative_filepath){
+        downloadbtn.href = relative_filepath;//Set button to file location on server
+        downloadbtn.click();//'Click' action on the button
+    }
 }

@@ -4,7 +4,6 @@ const http = require('http');//needed for communication
 const https = require('https');//needed for secure communication
 const fs = require('fs');//read files
 const path = require('path');
-const formidable = require('formidable');
 const port = 1999;//port for the server
 
 let keylog = [];
@@ -102,48 +101,44 @@ const server = http.createServer(function (req, res) {
 
             break;
 
-        case '/action/post/file/buffer'://receive folder instructions from Control page
+        case '/action/post/file/buffer'://Multiple file chunks should arrive in quick sucession
 
             req.on('data', function (data) {
                 //console.log('file buffer posted', data);
                 /*var file = JSON.parse(data);*/
-                console.log('File data :', data)
-                console.log('writing to :', path.join('temp/', tempdetails.base));
+                //console.log('File data :', data)
+                //console.log('writing to :', path.join('temp/', tempdetails.base));
                 //try {//try to write rceived file
                 try {
-                    if (!fs.existsSync('temp/')) { fs.mkdirSync('temp/') }
-                    fs.writeFile('temp/' + tempdetails.base, data, function (err) { if (err) { throw err; } })//write posted file 
+                    fs.appendFile(path.join('temp/', tempdetails.base), data, function (err) { if (err) { throw err; } })
+                    //data.pipe(instream)
+                    res.end();
                 } catch (err) {
                     console.error(err)
                 }
                 //} catch (err) { console.error(err) }
 
-                res.end();
+
             });
 
             break;
 
-        case '/action/post/file/data'://receive file data instructions before file buffer is posted
+        case '/action/post/file/info'://receive file data instructions before buffers are posted
 
             req.on('data', function (data) {
-                //console.log('file buffer posted', data);
-                tempdetails = JSON.parse(data);
 
-                res.end();
-            });
+                tempdetails = JSON.parse(data);//Incomming details
 
-            break;
-
-        case '/fileupload':
-
-            var form = new formidable.IncomingForm();//Formidable file format
-            form.parse(req, function (err, fields, files) {//parse data from the form
-                //move file from default location to server
-                fs.rename(files.filetoupload.path, path.join('temp/', files.filetoupload.name), function (err) {
-                    if (err) console.log(err);
-                    res.write('File uploaded and moved!');
+                //Ensure folder and file exist and are ready
+                try {
+                    if (!fs.existsSync('temp/')) { fs.mkdirSync('temp/') }//create folder
+                    //fs.writeFile('temp/' + tempdetails.base, null, function (err) { if (err) { throw err; } })//make/empty file
+                    console.log('Created file: ',path.join('temp/', tempdetails.base))
                     res.end();
-                });
+                } catch (err) {//catch error
+                    console.log(err)
+                    res.end();
+                }
             });
 
             break;
