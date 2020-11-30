@@ -34,6 +34,22 @@ body {
     font-family: 'Lexend Deca', sans-serif;
 }
 
+::-webkit-scrollbar {
+    width: 1.5vh;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--off_grey);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--half_grey);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: var(--grey);
+}
+
 .view {
     position: relative;
     height: fit-content;

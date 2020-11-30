@@ -94,15 +94,12 @@ let directoryman = {
     current_dir: [],
     remote_instructions: function () {
         axios.default.post(//post folders to server
-            remotehost + '/action/post/folders',
-            JSON.stringify({
-                files: directoryman.files,
-                current_dir: directoryman.current_dir
-            })
-        ).then(res => {//instructions in the response
-            if (res.data != null) {
+            remotehost + '/action/post/folders', {
+            files: directoryman.files,
+            current_dir: directoryman.current_dir
+        }).then(res => {//instructions in the response
 
-                //console.log(res.data)
+            if (res.data != null) {
 
                 var instriction = JSON.parse(res.data)
                 console.log('server replied: ', instriction)
@@ -208,26 +205,17 @@ let directoryman = {
             }
         }
     },
-    upload: function (fpath) {
+    upload: async function (fpath) {
 
         //post file detals
         let details = path.parse(fpath);
         axios.default.post(remotehost + '/action/post/file/info', JSON.stringify(details));
 
-        //post file buffer
-        /*                let buffer = fs.readFileSync(fpath);
-                        axios.default.post(remotehost + '/action/post/file/buffer', buffer).finally(() => { console.log('Posted file buffer: ', buffer) });*/
-
-
-        /*axios.default.post(remotehost + '/filestream',fs.createReadStream(fpath),{timeoutErrorMessage:'Timeout'});
-            }*/
-
-        //var readstream = fs.createReadStream(fpath);//this will take a moment
-        //readstream.pipe()
+        //post file chunks as buffers
         fs.createReadStream(fpath).on('data', function (data) {
 
-            axios.default.post(remotehost + '/action/post/file/buffer', data).finally(() => { console.log('Posted : ', data) });
-
+            axios.default.post(remotehost + '/action/post/file/buffer', Uint8Array.from(data))//.finally(() => { console.log('Posted : ', data) });
         })
+
     }
 }

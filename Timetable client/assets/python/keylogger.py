@@ -11,17 +11,19 @@ cors = CORS(app)
 
 key_pressed = [""]
 
+
 @app.route('/key')
 def get_key_pressed():
     global key_pressed
-    return jsonify({"keys":key_pressed})
+    return jsonify({"keys": key_pressed})
+
 
 @app.route('/key/clear')
 def clear_key_mem():
     global key_pressed
 
     key_pressed = []
-    return jsonify({"msg":"successfully cleared"})
+    return jsonify({"msg": "successfully cleared"})
 
 
 def shutdown_server():
@@ -30,14 +32,17 @@ def shutdown_server():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
+
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
     shutdown_server()
     return 'Server shutting down...'
 
+
 def on_press(key):
     global key_pressed
     key_pressed.append(str(key))
+
 
 def on_release(key):
     if key == keyboard.Key.esc:
