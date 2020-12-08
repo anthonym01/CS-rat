@@ -38,8 +38,8 @@
 .dark {
     --hue_value: 0;
     --saturat: 0%;
-    --background-color: black;
-    --text-color: white;
+    --background-color: #000000;
+    --text-color: #ffffff;
     --grey: rgb(100, 100, 100);
     --dark-grey: rgb(50, 50, 50);
     --icon: url('../img/icon.webp');
@@ -56,6 +56,7 @@
     --setting: url('../img/setting-light.webp');
     --linear_color: linear-gradient(120deg, hsl(var(--hue_value), var(--saturat), 70%), hsl(var(--hue_value), var(--saturat), 60%), hsl(var(--hue_value), var(--saturat), 50%), hsl(var(--hue_value), var(--saturat), 40%), hsl(var(--hue_value), var(--saturat), 30%));
     --primary_hue: hsl(var(--hue_value), var(--saturat), 50%);
+    --primary_hue_t: hsl(var(--hue_value), var(--saturat), 50%, 0.6);
     --primary_hue_active: hsl(var(--hue_value), var(--saturat), 40%);
 
 }
@@ -140,6 +141,7 @@
     --setting: url('../img/setting-dark.webp');
     --linear_color: linear-gradient(120deg, hsl(var(--hue_value), var(--saturat), 30%), hsl(var(--hue_value), var(--saturat), 40%), hsl(var(--hue_value), var(--saturat), 50%), hsl(var(--hue_value), var(--saturat), 60%), hsl(var(--hue_value), var(--saturat), 70%));
     --primary_hue: hsl(var(--hue_value), var(--saturat), 50%);
+    --primary_hue_t: hsl(var(--hue_value), var(--saturat), 50%, 0.6);
     --primary_hue_active: hsl(var(--hue_value), var(--saturat), 60%);
 }
 
@@ -401,7 +403,7 @@ a:hover {
 /* Clock */
 
 .Clock_lock {
-    position: absolute;
+    position: fixed;
     overflow: visible;
     bottom: 11vw;
     right: 2vw;
@@ -442,7 +444,8 @@ a:hover {
     text-shadow: 0vh 0vh 0.5vh var(--text-color);
     /*overflow: hidden;*/
 }
-.light .snumber_slide{
+
+.light .snumber_slide {
     text-shadow: none;
 }
 
@@ -810,65 +813,19 @@ a:hover {
 }
 
 /*  Loading Screen  */
-#Loading {
+#page_shadeer {
+    /* Hides page when it first loads */
     position: fixed;
+    background-color: var(--background-color);
+    transition: background-color 400ms;
+    height: 100%;
+    width: 100%;
+    z-index: 9999;
     top: 0;
     right: 0;
-    height: 100vh;
-    width: 100vw;
-    z-index: 5000;
     display: block;
-    box-shadow: var(--text-color);
-    background-color: var(--background-color);
-}
-
-#Loading #title {
-    position: relative;
-    margin-top: 30vh;
-    height: 15vw;
-    font-size: 15vw;
-    width: 100%;
-    text-align: center;
-    border-radius: 10vh;
-    animation: pulse 2s ease infinite;
-}
-
-#Loading #loader {
-    position: relative;
-    margin-top: 3vh;
-    margin-left: auto;
-    margin-right: auto;
-    height: 7vh;
-    width: 90vw;
-    border-radius: 2vh;
     overflow: hidden;
-    animation: none;
-    border: 0.5vh solid var(--text-color);
-}
-
-@keyframes loadimate {
-    0% {
-        left: 0%;
-    }
-
-    50% {
-        left: 80%;
-    }
-
-    100% {
-        left: 0%;
-    }
-}
-
-#loadimate {
-    position: absolute;
-    top: 0;
-    left: 0%;
-    height: 100%;
-    width: 20%;
-    background-color: var(--primary_hue);
-    border-radius: 2vh;
-    animation: loadimate 2s ease-in-out infinite;
+    -webkit-app-region: drag;
 }
 
 /*  page darkener   */
@@ -906,6 +863,10 @@ a:hover {
     /*overflow: auto;*/
     overflow-x: auto;
     overflow-y: hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    /*ackground-image: var(--timetable_background);*/
 }
 
 /*Timetable view*/
@@ -1018,11 +979,12 @@ a:hover {
     table-layout: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: var(--timetable_background);
-    text-shadow: 0vh 0vh 0.3vh var(--background-color);
     background-position: center;
+    /*ackground-image: var(--timetable_background);*/
+    text-shadow: 0vh 0vh 0.3vh var(--background-color);
 }
-.light #timetable{
+
+.light #timetable {
     text-shadow: none;
 }
 
@@ -1031,7 +993,7 @@ tr {
 }
 
 .glowrow {
-    background-color: var(--primary_hue);
+    background-color: var(--primary_hue_t);
     /*animation: glow 4s infinite;*/
 }
 
@@ -1102,6 +1064,7 @@ td {
     /*prime for transition incase multi mouse*/
     transition: box-shadow 0ms, background-color 0ms, color 0ms;
     box-shadow: 0vh 0.5vh 2vh 0vh var(--text-color);
+    z-index: 1000;
 }
 
 .data_block:active,
@@ -1120,8 +1083,8 @@ td {
     right: 1vh;
     min-width: 100%;
     width: 100%;
-    height: fit-content;
-    max-height: 700%;
+    height: auto;
+    max-height: auto;
     max-width: 200%;
     display: block;
     opacity: 0;
@@ -1134,7 +1097,31 @@ td {
     background-color: inherit;
     text-shadow: inherit;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: auto;
+}
+
+.infodoot:hover {
+    z-index: 1000;
+}
+
+/*Scrollbar custom*/
+.infodoot::-webkit-scrollbar {
+    width: 0.5vh;
+}
+
+/*Scrollbar custom*/
+::-webkit-scrollbar-track {
+    background: var(--dark-grey);
+}
+
+/*Scrollbar background*/
+::-webkit-scrollbar-thumb {
+    background: var(--grey);
+}
+
+/*scrollbar thumb*/
+::-webkit-scrollbar-thumb:active {
+    background: var(--primary_hue);
 }
 
 .infodoot:active {
@@ -1178,7 +1165,8 @@ td {
     background: none !important;
     white-space: pre-wrap;
     /* Scroll when full */
-    overflow: auto;
+    overflow-y: auto;
+    overflow-y: auto;
 }
 
 .infodoot .lefter {

