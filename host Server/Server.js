@@ -152,7 +152,7 @@ const server = http.createServer(function (request, response) {
 
         }
 
-    } catch (err) {
+    } catch (err) {//handle error
         console.log('Error: ', err)
         response.end()
     }
