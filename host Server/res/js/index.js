@@ -156,7 +156,7 @@ let directoryman = {
             link.innerText = path;
             link.title = "download" + path; 
             link.href = 'temp/'+path
-            link.download = true;
+            link.setAttribute('download','')
             downloadbox.appendChild(link)
         })
     },
