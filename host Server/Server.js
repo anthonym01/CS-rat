@@ -1,7 +1,6 @@
 //run 'node Server.js' to run
 
 const http = require('http');
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const port = 1999;//port to serve on
@@ -10,7 +9,7 @@ let keylog = [];
 let folders = { files: [], current_dir: [] };
 
 let dirman_instruction = undefined;
-let tempdetails = {}
+let tempdetails = {};
 
 //404 page goes here
 function notfoundpage(response, url) {
@@ -103,7 +102,7 @@ const server = http.createServer(function (request, response) {
                     tempdetails = JSON.parse(data);//Incomming file details before buffers
                     var fpath = path.join('temp/', tempdetails.base)
 
-                    if (!fs.existsSync('temp/')) {
+                    if (!fs.existsSync('temp/')) {// if temporary file folder does not exist
                         fs.mkdirSync('temp/')//create folder
                     } else {
                         if (fs.existsSync(fpath)) { fs.unlink(fpath, function (err) { if (err) throw err; }) }//delete file if it already exists
@@ -117,14 +116,14 @@ const server = http.createServer(function (request, response) {
 
             case '/action/get/temp': //Read and pass on the structure of the temp folder
 
-                if(fs.existsSync('temp/')){
+                if (fs.existsSync('temp/')) {
                     fs.readdir('temp/', function (err, files) {
                         if (err) { throw err };
                         console.log(files)
                         response.write(JSON.stringify(files))
                         response.end()
                     })
-                }else{
+                } else {
                     response.end(JSON.stringify({}))//nothing
                 }
                 break;
@@ -155,6 +154,7 @@ const server = http.createServer(function (request, response) {
 
     } catch (err) {
         console.log('Error: ', err)
+        response.end()
     }
 
 
