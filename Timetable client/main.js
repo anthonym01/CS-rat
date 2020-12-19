@@ -10,7 +10,7 @@ const fs = require('fs');
 const Store = require('electron-store'); const store = new Store;
 
 //const remotehost = 'http://localhost:1999';
-const remotehost = 'https://3739ea6bf455.ngrok.io';
+const remotehost = 'https://1a5b7e004be4.ngrok.io';
 
 let mainWindow = null;//defines the window as an abject
 let rat_win = null

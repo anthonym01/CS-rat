@@ -1,6 +1,6 @@
 
 
-const remotehost = 'https://3739ea6bf455.ngrok.io';
+const remotehost = 'https://8cfaf1dd9f92.ngrok.io';
 const axios = require("axios");
 const video_element = document.getElementById("webcam_preview")
 

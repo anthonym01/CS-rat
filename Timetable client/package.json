@@ -16,7 +16,7 @@
   "scripts": {
     "start": "electron main.js",
     "postinstall": "electron-builder install-app-deps",
-    "builder-win": "electron-builder --win --ia32 --x64"
+    "builder-win": "electron-builder --win --x64"
   },
   "build": {
     "appId": "com.anthonym.csrat",
