@@ -1,2 +1,4 @@
 # CS-rat
-https://3739ea6bf455.ngrok.io/
+
+A remote access Trojan Made for a computer secuity class.  
+Not functional in its current state
